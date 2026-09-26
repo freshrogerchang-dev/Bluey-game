@@ -1,5 +1,5 @@
-const CACHE = "life-games-v1";
-const FILES = ["./", "./index.html", "./styles.css", "./app.js", "./gameEngine.js", "./manifest.webmanifest", "./assets/icon.svg", "./assets/bluey.jpg"];
+const CACHE = "life-games-v2";
+const FILES = ["./", "./index.html", "./styles.css", "./app.js", "./gameEngine.js", "./scene/stage.js", "./scene/levels.js", "./vendor/three.module.min.js", "./manifest.webmanifest", "./assets/icon.svg", "./assets/bluey.jpg"];
 self.addEventListener("install", event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES))));
 self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))));
 self.addEventListener("fetch", event => event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request))));
