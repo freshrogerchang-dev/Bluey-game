@@ -1,0 +1,89 @@
+:root {
+  color-scheme: light;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --ink: #17324d;
+  --blue: #2f80c9;
+  --blue-dark: #175a9b;
+  --cream: #fff8e8;
+  --sun: #f6b93b;
+  --mint: #73c7a5;
+  --coral: #f47b67;
+  --card: #ffffff;
+  --shadow: 0 12px 30px rgba(34, 74, 112, 0.13);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; color: var(--ink); background: linear-gradient(180deg, #b9e6ff 0 22rem, var(--cream) 22rem); }
+button { font: inherit; }
+.hidden { visibility: hidden; }
+.topbar { min-height: 72px; display: flex; align-items: center; justify-content: space-between; max-width: 1040px; margin: auto; padding: 10px 20px; }
+.brand { display: flex; flex-direction: column; text-align: center; font-weight: 700; line-height: 1; }
+.brand span { font-size: .9rem; letter-spacing: .15em; }
+.brand strong { font-size: 1.45rem; }
+.icon-button, .speak-button { width: 52px; height: 52px; border: 0; border-radius: 18px; background: white; box-shadow: var(--shadow); font-size: 1.65rem; color: var(--ink); cursor: pointer; }
+.icon-button:focus-visible, button:focus-visible { outline: 5px solid #fff; box-shadow: 0 0 0 8px var(--blue-dark); }
+main { width: min(100% - 28px, 1000px); margin: auto; padding: 10px 0 50px; }
+.hero-card { min-height: 250px; display: flex; align-items: center; justify-content: space-between; overflow: hidden; background: #fff; border: 4px solid rgba(255,255,255,.7); border-radius: 36px; padding: 30px 36px; box-shadow: var(--shadow); }
+.hero-card h1, .game-heading h1 { margin: 5px 0 10px; font-size: clamp(2rem, 7vw, 4rem); line-height: 1.05; }
+.hero-card p { max-width: 520px; font-size: 1.15rem; }
+.hero-character { width: 190px; height: 220px; object-fit: contain; mix-blend-mode: multiply; }
+.eyebrow { color: var(--blue-dark); font-weight: 900; letter-spacing: .08em; margin: 0; }
+.mission-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 22px; }
+.mission-card { min-height: 175px; padding: 22px; border: 0; border-radius: 30px; display: grid; grid-template-columns: 82px 1fr auto; align-items: center; gap: 18px; color: var(--ink); text-align: left; cursor: pointer; box-shadow: var(--shadow); transition: transform .18s ease; }
+.mission-card:hover { transform: translateY(-4px); }
+.mission-card:nth-child(1) { background: #ccecff; }
+.mission-card:nth-child(2) { background: #d8f3e8; }
+.mission-card:nth-child(3) { background: #fff0b8; }
+.mission-card:nth-child(4) { background: #ffd9d2; }
+.mission-icon { width: 78px; height: 78px; border-radius: 24px; display: grid; place-items: center; background: rgba(255,255,255,.75); font-size: 3rem; }
+.mission-card h2 { font-size: 1.55rem; margin: 0 0 5px; }
+.mission-card p { margin: 0; line-height: 1.5; }
+.mission-status { font-size: 1.6rem; }
+.parent-note { text-align: center; color: #586d80; margin: 24px 0; }
+.game-heading { display: flex; align-items: end; justify-content: space-between; padding: 12px 8px; }
+.game-heading h1 { font-size: clamp(2rem, 6vw, 3.4rem); }
+.progress-dots { display: flex; gap: 8px; padding-bottom: 12px; }
+.progress-dot { width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,.6); border: 3px solid white; }
+.progress-dot.done { background: var(--mint); }
+.progress-dot.current { background: var(--sun); transform: scale(1.25); }
+.coach-card { display: grid; grid-template-columns: 72px 1fr 58px; gap: 16px; align-items: center; background: white; border-radius: 26px; padding: 12px 16px; box-shadow: var(--shadow); }
+.coach-card img { width: 68px; height: 68px; object-fit: contain; mix-blend-mode: multiply; }
+.coach-card strong { font-size: 1.1rem; }
+.coach-card p { margin: 4px 0 0; font-size: 1.2rem; }
+.play-area { min-height: 390px; margin-top: 20px; background: rgba(255,255,255,.75); border-radius: 34px; padding: clamp(18px, 4vw, 36px); display: grid; align-content: center; }
+.choice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.choice { min-height: 135px; border: 4px solid transparent; border-radius: 26px; background: white; box-shadow: 0 7px 0 #c8d9e8; cursor: pointer; padding: 15px; color: var(--ink); }
+.choice:hover { border-color: var(--sun); }
+.choice .emoji { display: block; font-size: 3.4rem; margin-bottom: 8px; }
+.choice .label { display: block; font-size: 1.2rem; font-weight: 900; }
+.choice.selected { border-color: var(--blue); background: #e7f5ff; transform: translateY(5px); box-shadow: 0 2px 0 #8fb6d6; }
+.feedback { min-height: 54px; display: grid; place-items: center; font-size: 1.2rem; font-weight: 900; padding: 10px; }
+.feedback.gentle { color: #78511b; }
+.feedback.good { color: #176647; }
+.action-row { display: flex; justify-content: center; gap: 14px; margin-top: 24px; flex-wrap: wrap; }
+.primary, .secondary { min-height: 60px; padding: 12px 28px; border-radius: 20px; border: 0; font-weight: 900; font-size: 1.15rem; cursor: pointer; }
+.primary { color: white; background: var(--blue-dark); box-shadow: 0 7px 0 #0b3b68; }
+.primary:disabled { background: #9eb2c4; box-shadow: 0 7px 0 #718395; cursor: not-allowed; }
+.secondary { color: var(--ink); background: white; border: 3px solid #bdd3e4; }
+.celebration { text-align: center; }
+.celebration .big { font-size: 6rem; display: block; animation: bounce .8s ease both; }
+.celebration h2 { font-size: 2.2rem; margin: 10px; }
+.stars { color: #e79b00; font-size: 2rem; letter-spacing: .2em; }
+@keyframes bounce { 0% { transform: scale(.5) rotate(-8deg); } 65% { transform: scale(1.15) rotate(5deg); } 100% { transform: scale(1); } }
+
+@media (max-width: 680px) {
+  body { background: linear-gradient(180deg, #b9e6ff 0 18rem, var(--cream) 18rem); }
+  .hero-card { padding: 22px; min-height: 220px; }
+  .hero-character { width: 125px; height: 160px; margin-right: -12px; }
+  .hero-card p { font-size: 1rem; }
+  .mission-grid { grid-template-columns: 1fr; }
+  .mission-card { min-height: 135px; grid-template-columns: 70px 1fr auto; }
+  .mission-icon { width: 68px; height: 68px; font-size: 2.5rem; }
+  .choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .play-area { min-height: 360px; }
+  .game-heading { align-items: center; }
+  .coach-card { grid-template-columns: 58px 1fr 50px; }
+  .coach-card img { width: 55px; height: 55px; }
+}
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

@@ -1,0 +1,10 @@
+{
+  "name": "布麗的生活任務",
+  "short_name": "生活任務",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fff8e8",
+  "theme_color": "#f6b93b",
+  "lang": "zh-Hant-TW",
+  "icons": [{ "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
