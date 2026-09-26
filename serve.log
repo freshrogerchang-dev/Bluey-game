@@ -1,0 +1,381 @@
+ INFO  Accepting connections at http://0.0.0.0:4173
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 28 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 7 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 31 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 6 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /index.html
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 301 in 1 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 GET /index
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 301 in 1 ms
+ HTTP  9/26/2026 3:04:11 PM 127.0.0.1 Returned 200 in 7 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 3 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /manifest.webmanifest
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /assets/icon.svg
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:04:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:04:42 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:04:42 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:04:44 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:04:44 PM 127.0.0.1 Returned 304 in 3 ms
+ HTTP  9/26/2026 3:05:06 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:05:06 PM 127.0.0.1 Returned 304 in 15 ms
+ HTTP  9/26/2026 3:05:09 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:05:09 PM 127.0.0.1 Returned 304 in 10 ms
+ HTTP  9/26/2026 3:05:24 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:05:24 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:26 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:05:26 PM 127.0.0.1 Returned 304 in 22 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 5 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /index.html
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 301 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /index
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 301 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /manifest.webmanifest
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /assets/icon.svg
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:05:45 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:06:16 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:06:16 PM 127.0.0.1 Returned 304 in 7 ms
+ HTTP  9/26/2026 3:06:18 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:06:18 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:06:40 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:06:40 PM 127.0.0.1 Returned 304 in 7 ms
+ HTTP  9/26/2026 3:06:42 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:06:42 PM 127.0.0.1 Returned 304 in 3 ms
+ HTTP  9/26/2026 3:06:57 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:06:57 PM 127.0.0.1 Returned 304 in 4 ms
+ HTTP  9/26/2026 3:07:00 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:07:00 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:07:18 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:07:18 PM 127.0.0.1 Returned 304 in 13 ms
+ HTTP  9/26/2026 3:07:21 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:07:21 PM 127.0.0.1 Returned 304 in 5 ms
+ HTTP  9/26/2026 3:08:39 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:08:39 PM 127.0.0.1 Returned 200 in 11 ms
+ HTTP  9/26/2026 3:08:39 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:08:39 PM 127.0.0.1 Returned 200 in 6 ms
+ HTTP  9/26/2026 3:08:39 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:08:39 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 8 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /index.html
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /index
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 301 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 2 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /manifest.webmanifest
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /assets/icon.svg
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:08:40 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:09:10 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:09:10 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:09:12 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:09:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:09:36 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:09:36 PM 127.0.0.1 Returned 304 in 10 ms
+ HTTP  9/26/2026 3:09:38 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:09:38 PM 127.0.0.1 Returned 304 in 2 ms
+ HTTP  9/26/2026 3:09:54 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:09:54 PM 127.0.0.1 Returned 304 in 12 ms
+ HTTP  9/26/2026 3:09:57 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:09:57 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 7 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /index.html
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 301 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /index
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /manifest.webmanifest
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /assets/icon.svg
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:10:13 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:10:44 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:10:44 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:10:45 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:10:45 PM 127.0.0.1 Returned 304 in 3 ms
+ HTTP  9/26/2026 3:11:09 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:11:09 PM 127.0.0.1 Returned 304 in 9 ms
+ HTTP  9/26/2026 3:11:12 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:11:12 PM 127.0.0.1 Returned 304 in 2 ms
+ HTTP  9/26/2026 3:11:27 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:11:27 PM 127.0.0.1 Returned 304 in 8 ms
+ HTTP  9/26/2026 3:11:30 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:11:30 PM 127.0.0.1 Returned 304 in 3 ms
+ HTTP  9/26/2026 3:11:49 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:11:49 PM 127.0.0.1 Returned 304 in 11 ms
+ HTTP  9/26/2026 3:11:52 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:11:52 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 6 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /index.html
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 301 in 16 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 25 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /index
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 4 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 6 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /manifest.webmanifest
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /assets/icon.svg
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:12:33 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /index.html
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /index
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /manifest.webmanifest
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /assets/icon.svg
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:12:51 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /index.html
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /styles.css
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /index
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 301 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /app.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /gameEngine.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /scene/stage.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /scene/levels.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /vendor/three.module.min.js
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /manifest.webmanifest
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /assets/icon.svg
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 GET /assets/bluey.jpg
+ HTTP  9/26/2026 3:13:12 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:13:42 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:13:42 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:13:44 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:13:44 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:14:08 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:14:08 PM 127.0.0.1 Returned 304 in 13 ms
+ HTTP  9/26/2026 3:14:10 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:14:10 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:14:25 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:14:25 PM 127.0.0.1 Returned 304 in 10 ms
+ HTTP  9/26/2026 3:14:28 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:14:28 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:14:47 PM 127.0.0.1 GET /?debug
+ HTTP  9/26/2026 3:14:47 PM 127.0.0.1 Returned 304 in 1 ms
+ HTTP  9/26/2026 3:14:49 PM 127.0.0.1 GET /sw.js
+ HTTP  9/26/2026 3:14:49 PM 127.0.0.1 Returned 304 in 2 ms

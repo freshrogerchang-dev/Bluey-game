@@ -64,6 +64,7 @@ export function label(text, { size = 0.9, color = "#17324d", background = "rgba(
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, depthTest: false }));
   sprite.scale.set(size * width / 100, size, 1);
   sprite.renderOrder = 10;
+  sprite.userData.isLabel = true;
   return sprite;
 }
 
@@ -236,11 +237,24 @@ export function createPup(stage) {
   const head = group(
     ball(0.5, blue),
     at(ball(0.3, light), 0, -0.12, 0.35),
-    at(ball(0.09, dark), 0, -0.02, 0.62),
-    at(ball(0.07, "#111"), -0.2, 0.12, 0.42),
-    at(ball(0.07, "#111"), 0.2, 0.12, 0.42)
+    at(ball(0.09, dark), 0, -0.02, 0.62)
   );
   head.position.y = 1.9;
+  // 大眼睛（眼白＋黑眼珠＋反光）與白眉毛
+  const eyes = [-1, 1].map(side => {
+    const eye = group(
+      ball(0.18, "#ffffff"),
+      at(ball(0.11, "#1a1a1a"), 0, -0.01, 0.1),
+      at(ball(0.04, "#ffffff"), -0.035, 0.035, 0.2)
+    );
+    eye.position.set(side * 0.2, 0.12, 0.38);
+    head.add(eye);
+    const brow = cyl(0.045, 0.045, 0.24, "#ffffff", 10);
+    brow.position.set(side * 0.21, 0.36, 0.38);
+    brow.rotation.set(0.5, 0, Math.PI / 2 - side * 0.25);
+    head.add(brow);
+    return eye;
+  });
   [-1, 1].forEach(side => {
     const ear = cyl(0, 0.2, 0.55, dark, 12);
     ear.position.set(side * 0.28, 0.5, -0.05);
@@ -281,6 +295,9 @@ export function createPup(stage) {
   stage.onUpdate(dt => {
     const data = pup.userData;
     tail.rotation.z = Math.sin(performance.now() / 120) * 0.5;
+    // 每 3.5 秒眨一次眼
+    const blink = performance.now() % 3500 < 120 ? 0.15 : 1;
+    eyes.forEach(eye => { eye.scale.y = blink; });
     if (!data.target) {
       legs.forEach(leg => { leg.rotation.x *= 0.8; });
       body.position.y = 0.95;
@@ -325,4 +342,38 @@ export function room(stage, { floor = "#f3dfb8", wall = "#fff3d6", width = 16, d
   back.position.set(0, 3, -5);
   back.receiveShadow = true;
   stage.add(ground, back);
+}
+
+// 提示：把目標原本的招牌換成黃色提示牌（寫著拿什麼／放哪裡），下面有跳動的箭頭。
+// 沒有招牌的東西（地上的玩具）就用 height 決定提示牌的高度。
+export function createHints(stage) {
+  let markers = [];
+  let key = "";
+  stage.onUpdate(() => {
+    const bounce = Math.abs(Math.sin(performance.now() / 260)) * 0.25;
+    markers.forEach(marker => { marker.userData.arrow.position.y = marker.userData.arrowY + bounce; });
+  });
+  return list => {
+    const nextKey = list.map(hint => `${hint.object.uuid}:${hint.text}`).join("|");
+    if (nextKey === key) return;
+    key = nextKey;
+    markers.forEach(marker => {
+      if (marker.userData.hidden) marker.userData.hidden.visible = true;
+      marker.traverse(object => object.material?.map?.dispose());
+      marker.removeFromParent();
+    });
+    markers = list.map(({ object, text, height = 1.2 }) => {
+      const sign = object.children.find(child => child.userData.isLabel && child.visible);
+      const anchor = (sign ?? object).getWorldPosition(new THREE.Vector3());
+      const labelY = sign ? anchor.y + 0.25 : anchor.y + height;
+      if (sign) sign.visible = false;
+      const arrow = cyl(0.22, 0, 0.4, "#ffb703", 16, { emissive: "#b86e00", emissiveIntensity: 0.4 });
+      arrow.castShadow = false;
+      const marker = group(arrow, at(label(`👉 ${text}`, { size: 0.55, background: "rgba(255,183,3,.95)" }), 0, labelY, 0));
+      marker.position.set(anchor.x, 0, anchor.z);
+      marker.userData = { arrow, arrowY: labelY - 0.6, hidden: sign };
+      stage.add(marker);
+      return marker;
+    });
+  };
 }

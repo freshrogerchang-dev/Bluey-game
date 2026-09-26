@@ -1,5 +1,5 @@
 // 四個 3D 關卡。每個關卡回傳 { intro, update(dt), score() }，規則都在 gameEngine.js。
-import { THREE, Stage, createPup, room, box, cyl, ball, at, group, label, hitBox, mat } from "./stage.js";
+import { THREE, Stage, createPup, createHints, room, box, cyl, ball, at, group, label, hitBox, mat } from "./stage.js";
 import * as g from "../gameEngine.js";
 
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
@@ -29,6 +29,8 @@ export function buildOmelet(container, ui) {
   at(pup, 0, 0, 1);
 
   const bins = { wrap: -5, egg: -2.8, scallion: -0.6 };
+  const binObjects = {};
+  const showHints = createHints(stage);
   const stoveX = 2.6;
   stage.add(at(counter(7.6), -2.8, 0, -3.6), at(counter(3.2, "#c6d4e1", "#8a99a8"), stoveX, 0, -3.6));
 
@@ -47,6 +49,7 @@ export function buildOmelet(container, ui) {
     hitBox(bin, 1.8, 1.6, 1.4);
     at(bin, x, 1.42, -3.6);
     stage.add(bin);
+    binObjects[kind] = bin;
     stage.tappable(bin, () => pup.walkTo(...standBefore(x, -3.6), () => {
       const result = g.omeletPick(state, kind);
       if (!result.ok) return ui.hint(result.hint);
@@ -101,6 +104,14 @@ export function buildOmelet(container, ui) {
     const steps = g.OMELET_RECIPE.map((kind, i) => `<span class="${i < state.pan.length ? "done" : kind === next ? "now" : ""}">${["🫓", "🥚", "🌿"][i]} ${g.OMELET_NAMES[kind]}</span>`);
     const tail = { filling: next ? `去拿${g.OMELET_NAMES[next]}` : "", cooking: "煎煎煎…", flip: "翻面！點鍋子", serve: "起鍋！點鍋子", burnt: "焦了，點鍋子倒掉" }[status];
     ui.guide(`${steps.join("<b>›</b>")}<b>›</b><span class="now">${tail}</span>`);
+    if (status === "filling") {
+      showHints(state.holding === next
+        ? [{ object: stove, text: `把${g.OMELET_NAMES[next]}放進鍋子` }]
+        : [{ object: binObjects[next], text: `拿${g.OMELET_NAMES[next]}` }]);
+    } else {
+      // 翻面／起鍋時鍋子上方已經有大提示牌
+      showHints([]);
+    }
   }
 
   function rebuildFood() {
@@ -253,8 +264,11 @@ export function buildDishes(container, ui) {
   at(rack, 4.3, 1.42, -3.6);
   stage.add(rack);
 
+  const showHints = createHints(stage);
   function refresh() {
     const status = g.dishesStatus(state);
+    const hint = { empty: [pile, "拿髒碗盤"], carry: [sink, "放進水槽"], scrub: [sink, "點水槽刷一刷"], rinse: [faucet, "按水龍頭沖水"], done: [rack, "放到瀝水架"] }[status];
+    showHints([{ object: hint[0], text: hint[1] }]);
     const order = ["empty", "carry", "scrub", "rinse", "done"];
     const names = ["拿髒碗盤", "放進水槽", "刷一刷", "沖水", "放瀝水架"];
     const current = order.indexOf(status);
@@ -420,6 +434,7 @@ export function buildClean(container, ui) {
   const spots = [];
   for (let x = -5; x <= 5; x += 2) for (let z = -1.2; z <= 3.6; z += 1.6) spots.push([x, z]);
   const used = new Map();
+  const messMeshes = new Map();
   function freeSpot() {
     const free = spots.filter(spot => ![...used.values()].includes(spot) && Math.hypot(spot[0] - pup.position.x, spot[1] - pup.position.z) > 1.2);
     const pool = free.length ? free : spots;
@@ -430,6 +445,7 @@ export function buildClean(container, ui) {
     const spot = freeSpot();
     used.set(item.id, spot);
     const mesh = group(messMesh(item.kind, item.id));
+    messMeshes.set(item.id, mesh);
     mesh.children[0].scale.setScalar(1.4);
     hitBox(mesh, 1.3, 1, 1.3, 0.4);
     const jitter = [(Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.4];
@@ -441,6 +457,7 @@ export function buildClean(container, ui) {
       const result = g.cleanPick(state, item.id);
       if (!result.ok) return result.hint && ui.hint(result.hint);
       used.delete(item.id);
+      messMeshes.delete(item.id);
       mesh.userData.onTap = null;
       const inner = mesh.children[0];
       pup.carry(inner);
@@ -452,8 +469,15 @@ export function buildClean(container, ui) {
     }, mesh.position));
   }
   state.floor.forEach(item => spawn(item, false));
+  const showHints = createHints(stage);
 
   function refresh() {
+    if (state.holding) {
+      showHints([{ object: binMeshes[state.holding.bin], text: `${state.holding.name}放這裡` }]);
+    } else {
+      const nearest = [...messMeshes.values()].sort((a, b) => a.position.distanceTo(pup.position) - b.position.distanceTo(pup.position))[0];
+      showHints(nearest ? [{ object: nearest, text: "撿起來", height: 1.5 }] : []);
+    }
     ui.guide(state.holding
       ? `<span class="now">拿著${state.holding.name}</span><b>›</b><span>送到${Object.values(g.CLEAN_BINS).join("／")}</span>`
       : `<span class="now">點地上的東西撿起來</span><b>›</b><span>🧸 玩具箱</span><span>🧺 洗衣籃</span><span>🗑️ 垃圾桶</span>`);
@@ -500,6 +524,8 @@ export function buildErrand(container, ui) {
 
   const kinds = Object.keys(g.SHOP_ITEMS);
   const awnings = ["#ef5350", "#42a5f5", "#66bb6a", "#ffa726", "#ab47bc", "#26c6da"];
+  const stalls = {};
+  const showHints = createHints(stage);
   kinds.forEach((kind, i) => {
     const x = -5.5 + i * 2.2;
     const z = -3.6;
@@ -509,6 +535,7 @@ export function buildErrand(container, ui) {
     hitBox(stall, 2, 3, 1.5);
     at(stall, x, 0, z);
     stage.add(stall);
+    stalls[kind] = stall;
     stage.tappable(stall, () => pup.walkTo(x, z + 1.4, () => {
       const result = g.errandTake(state, kind);
       if (!result.ok) return ui.hint(result.hint);
@@ -546,6 +573,9 @@ export function buildErrand(container, ui) {
   function refresh() {
     const items = state.list.map(item => `<span class="${state.basket.includes(item) ? "done" : "now"}">${SHOP_ICONS[item]} ${g.SHOP_ITEMS[item]}</span>`);
     const ready = state.basket.length === state.list.length;
+    showHints(ready
+      ? [{ object: till, text: "去結帳" }]
+      : state.list.filter(item => !state.basket.includes(item)).map(item => ({ object: stalls[item], text: `拿${g.SHOP_ITEMS[item]}` })));
     ui.guide(`<span>📝 清單</span>${items.join("")}<b>›</b><span class="${ready ? "now" : ""}">💰 結帳</span>`);
   }
   refresh();
