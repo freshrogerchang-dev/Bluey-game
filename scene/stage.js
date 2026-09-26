@@ -127,6 +127,12 @@ export class Stage {
     this.camera.aspect = w / h;
     // 直式手機畫面會把鏡頭拉遠，確保整個場景的寬度都看得到
     const dir = this.baseCamera.clone().sub(this.lookAt);
+    // 直式畫面（手機）改成比較俯視的角度，場景會佔滿更多高度
+    if (this.camera.aspect < 1) {
+      const portrait = Math.min(1, (1 - this.camera.aspect) * 2);
+      dir.y *= 1 + 0.6 * portrait;
+      dir.z *= 1 - 0.5 * portrait;
+    }
     const vFov = THREE.MathUtils.degToRad(this.camera.fov);
     const needed = this.fitWidth / 2 / Math.tan(vFov / 2) / this.camera.aspect;
     const scale = Math.max(1, needed / dir.length());
@@ -178,20 +184,6 @@ export class Stage {
     const base = object.userData.baseScale ?? object.scale.x;
     object.userData.baseScale = base;
     this.tween(0.25, t => object.scale.setScalar(base * (1 + Math.sin(t * Math.PI) * 0.12)));
-  }
-
-  // 物件沿拋物線飛到世界座標 target
-  fly(object, target, { duration = 0.45, height = 1.2, done } = {}) {
-    const world = new THREE.Vector3();
-    object.getWorldPosition(world);
-    if (object.parent !== this.scene) {
-      this.scene.attach(object);
-    }
-    const from = world.clone();
-    this.tween(duration, t => {
-      object.position.lerpVectors(from, target, t);
-      object.position.y += Math.sin(t * Math.PI) * height;
-    }, done);
   }
 
   frame() {
@@ -265,8 +257,15 @@ export function createPup(stage) {
   tail.position.set(0, 1.0, -0.6);
   tail.rotation.x = -0.9;
   const legs = [-1, 1].map(side => at(cyl(0.14, 0.16, 0.5, dark, 12), side * 0.25, 0.25, 0.05));
-  const hand = at(new THREE.Group(), 0, 1.25, 0.75);
-  pup.add(body, head, tail, ...legs, hand);
+  // 手臂：空手時垂下，拿東西時往前伸，東西夾在兩隻手掌中間
+  const arms = [-1, 1].map(side => {
+    const pivot = at(new THREE.Group(), side * 0.36, 1.32, 0.2);
+    pivot.add(at(cyl(0.1, 0.11, 0.62, blue, 12), 0, -0.31, 0), at(ball(0.13, light), 0, -0.64, 0));
+    pivot.rotation.z = side * 0.25;
+    return pivot;
+  });
+  const hand = at(new THREE.Group(), 0, 1.5, 0.78);
+  pup.add(body, head, tail, ...legs, ...arms, hand);
   pup.userData = { hand, target: null, onArrive: null, queue: [], speed: 6.5, walk: 0 };
 
   // 小朋友常常連點好幾下：依序排隊執行，最多記住 3 件事
@@ -286,6 +285,13 @@ export function createPup(stage) {
     object.rotation.set(0, 0, 0);
     hand.add(object);
   };
+  // 把手上的東西放到世界座標 target：短短滑過去，不會飛走
+  pup.putDown = (target, done) => {
+    const object = pup.release();
+    if (!object) return done?.();
+    const from = object.position.clone();
+    stage.tween(0.22, t => object.position.lerpVectors(from, target, t), () => done?.(object));
+  };
   pup.release = () => {
     const object = hand.children[0];
     if (object) stage.scene.attach(object);
@@ -295,6 +301,13 @@ export function createPup(stage) {
   stage.onUpdate(dt => {
     const data = pup.userData;
     tail.rotation.z = Math.sin(performance.now() / 120) * 0.5;
+    const holding = hand.children.length > 0;
+    arms.forEach((arm, i) => {
+      const goal = holding ? -1.95 : 0;
+      arm.rotation.x += (goal - arm.rotation.x) * 0.3;
+      arm.rotation.z = (i ? 1 : -1) * (holding ? -0.18 : 0.25);
+    });
+    hand.position.y = 1.5 + (body.position.y - 0.95);
     // 每 3.5 秒眨一次眼
     const blink = performance.now() % 3500 < 120 ? 0.15 : 1;
     eyes.forEach(eye => { eye.scale.y = blink; });
@@ -313,7 +326,8 @@ export function createPup(stage) {
       data.target = null;
       data.onArrive = null;
       done?.();
-      if (data.queue.length) startJob(data.queue.shift());
+      // done 可能已經自己安排了下一段路（例如把蛋餅端去盤子），那就不要蓋掉
+      if (!data.target && data.queue.length) startJob(data.queue.shift());
       return;
     }
     const step = Math.min(dist, data.speed * dt);
