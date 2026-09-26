@@ -241,7 +241,7 @@ export function createPup(stage) {
     );
     eye.position.set(side * 0.21, 0.14, 0.34);
     head.add(eye);
-    const brow = cyl(0.045, 0.045, 0.24, "#ffffff", 10);
+    const brow = cyl(0.045, 0.045, 0.24, light, 10);
     brow.position.set(side * 0.22, 0.42, 0.34);
     brow.rotation.set(0.5, 0, Math.PI / 2 - side * 0.25);
     head.add(brow);
@@ -251,6 +251,11 @@ export function createPup(stage) {
     const ear = cyl(0, 0.2, 0.55, dark, 12);
     ear.position.set(side * 0.28, 0.5, -0.05);
     ear.rotation.z = -side * 0.35;
+    // 耳朵內側是皮膚色
+    const inner = cyl(0, 0.13, 0.38, "#f2d3ab", 12);
+    inner.scale.z = 0.45;
+    inner.position.set(0, -0.06, 0.13);
+    ear.add(inner);
     head.add(ear);
   });
   const tail = cyl(0.05, 0.1, 0.6, dark, 10);
