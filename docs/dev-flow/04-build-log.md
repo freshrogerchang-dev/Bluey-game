@@ -23,3 +23,4 @@
 - repository：`freshrogerchang-dev/Bluey-game`。
 - GitHub Pages 直接從 `main` 分支根目錄發布；推送前在本機執行測試。
 - 預定網址：`https://freshrogerchang-dev.github.io/Bluey-game/`。
+- 部署驗證：HTTP 200，頁面標題為「布麗的生活任務」。
