@@ -399,42 +399,36 @@ function messMesh(kind, seed) {
   return peel;
 }
 
-export function buildClean(container, ui) {
-  const stage = new Stage(container, { background: "#d8f3e8" });
-  room(stage, { floor: "#e7c9a0", wall: "#f0fff7" });
-  const rug = cyl(4.5, 4.5, 0.03, "#b8e0d2", 40);
+// 分類場景（客廳、資源回收共用）：地上的東西撿起來，送進正確的箱子
+function buildSorter(container, ui, { state, background, floor, wall, rugColor, fitWidth, bins, meshFor, scale = 1.4, intro }) {
+  const stage = new Stage(container, { background, fitWidth });
+  room(stage, { floor, wall });
+  const rug = cyl(4.5, 4.5, 0.03, rugColor, 40);
   rug.scale.z = 0.6;
   at(rug, 0, 0.015, 1);
   stage.add(rug);
-  const state = g.createClean();
   const pup = createPup(stage);
   at(pup, 0, 0, 0.5);
 
-  const binSpots = { toybox: [-4.8, -3.6], laundry: [0, -3.9], trash: [4.8, -3.6] };
-  const binMeshes = {
-    toybox: group(at(box(2, 1.1, 1.3, "#ff8c61"), 0, 0.55, 0), at(box(2.1, 0.12, 1.4, "#ffb38a"), 0, 1.15, 0), at(label("🧸 玩具箱", { size: 0.55 }), 0, 2, 0)),
-    laundry: group(at(cyl(0.8, 0.65, 1.1, "#d9b77e", 20), 0, 0.55, 0), at(cyl(0.72, 0.72, 0.05, "#8a6d3b", 20), 0, 1.1, 0), at(label("🧺 洗衣籃", { size: 0.55 }), 0, 2, 0)),
-    trash: group(at(cyl(0.6, 0.5, 1.1, "#7f8c8d", 20), 0, 0.55, 0), at(cyl(0.65, 0.65, 0.1, "#5f6c6d", 20), 0, 1.12, 0), at(label("🗑️ 垃圾桶", { size: 0.55 }), 0, 2, 0))
-  };
-  for (const [bin, mesh] of Object.entries(binMeshes)) {
-    const [x, z] = binSpots[bin];
+  const binMeshes = {};
+  for (const [bin, { spot: [x, z], mesh }] of Object.entries(bins)) {
     hitBox(mesh, 2.2, 2.4, 1.6);
     at(mesh, x, 0, z);
     stage.add(mesh);
+    binMeshes[bin] = mesh;
     stage.tappable(mesh, () => pup.walkTo(x, z + 1.4, () => {
       const result = g.cleanDrop(state, bin);
       if (!result.ok) return ui.hint(result.hint);
       pup.putDown(V(x, 0.9, z), held => held.removeFromParent());
       ui.score(state.score);
-      ui.good(`${result.item.name}回家了！`);
+      ui.good(`${result.item.name}放對了！`);
       spawn(result.spawned, true);
       refresh();
     }, V(x, 0, z)));
   }
 
-  // 散落的位置：格子隨機挑，避免重疊
+  // 散落的位置：格子隨機挑，避免重疊；只放在鏡頭看得到的範圍，布麗走過去也不會跑出畫面
   const spots = [];
-  // 只放在鏡頭看得到的範圍，布麗走過去也不會跑出畫面
   for (let x = -5; x <= 5; x += 2) for (const z of [-1.4, -0.2, 1, 2.2]) spots.push([x, z]);
   const used = new Map();
   const messMeshes = new Map();
@@ -447,9 +441,9 @@ export function buildClean(container, ui) {
   function spawn(item, animate) {
     const spot = freeSpot();
     used.set(item.id, spot);
-    const mesh = group(messMesh(item.kind, item.id));
+    const mesh = group(meshFor(item.kind, item.id));
     messMeshes.set(item.id, mesh);
-    mesh.children[0].scale.setScalar(1.4);
+    mesh.children[0].scale.setScalar(scale);
     hitBox(mesh, 1.3, 1, 1.3, 0.4);
     const jitter = [(Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.4];
     at(mesh, spot[0] + jitter[0], 0, spot[1] + jitter[1]);
@@ -473,6 +467,7 @@ export function buildClean(container, ui) {
   }
   state.floor.forEach(item => spawn(item, false));
   const showHints = createHints(stage);
+  const binList = Object.entries(bins).map(([bin, { icon }]) => `<span>${icon} ${state.bins[bin]}</span>`).join("");
 
   function refresh() {
     if (state.holding) {
@@ -482,16 +477,87 @@ export function buildClean(container, ui) {
       showHints(nearest ? [{ object: nearest, text: "撿起來", height: 1.5 }] : []);
     }
     ui.guide(state.holding
-      ? `<span class="now">拿著${state.holding.name}</span><b>›</b><span>送到${Object.values(g.CLEAN_BINS).join("／")}</span>`
-      : `<span class="now">點地上的東西撿起來</span><b>›</b><span>🧸 玩具箱</span><span>🧺 洗衣籃</span><span>🗑️ 垃圾桶</span>`);
+      ? `<span class="now">拿著${state.holding.name}</span><b>›</b>${binList}`
+      : `<span class="now">點地上的東西撿起來</span><b>›</b>${binList}`);
   }
   refresh();
-  return {
-    stage,
-    intro: "點地上的東西，布麗會撿起來。玩具放玩具箱，衣服襪子放洗衣籃，垃圾丟垃圾桶！",
-    score: () => state.score,
-    update() {}
+  return { stage, intro, score: () => state.score, update() {}, debug: { state, binMeshes, messMeshes } };
+}
+
+export function buildClean(container, ui) {
+  return buildSorter(container, ui, {
+    state: g.createClean(),
+    background: "#d8f3e8", floor: "#e7c9a0", wall: "#f0fff7", rugColor: "#b8e0d2",
+    meshFor: messMesh,
+    bins: {
+      toybox: { spot: [-4.8, -3.6], icon: "🧸", mesh: group(at(box(2, 1.1, 1.3, "#ff8c61"), 0, 0.55, 0), at(box(2.1, 0.12, 1.4, "#ffb38a"), 0, 1.15, 0), at(label("🧸 玩具箱", { size: 0.55 }), 0, 2, 0)) },
+      laundry: { spot: [0, -3.9], icon: "🧺", mesh: group(at(cyl(0.8, 0.65, 1.1, "#d9b77e", 20), 0, 0.55, 0), at(cyl(0.72, 0.72, 0.05, "#8a6d3b", 20), 0, 1.1, 0), at(label("🧺 洗衣籃", { size: 0.55 }), 0, 2, 0)) },
+      trash: { spot: [4.8, -3.6], icon: "🗑️", mesh: group(at(cyl(0.6, 0.5, 1.1, "#7f8c8d", 20), 0, 0.55, 0), at(cyl(0.65, 0.65, 0.1, "#5f6c6d", 20), 0, 1.12, 0), at(label("🗑️ 垃圾桶", { size: 0.55 }), 0, 2, 0)) }
+    },
+    intro: "點地上的東西，布麗會撿起來。玩具放玩具箱，衣服襪子放洗衣籃，垃圾丟垃圾桶！"
+  });
+}
+
+// ---------------- 資源回收 ----------------
+
+function recycleMesh(kind) {
+  if (kind === "newspaper") {
+    const paper = group(at(box(0.8, 0.06, 0.6, "#e8e8e8"), 0, 0.03, 0));
+    for (let i = 0; i < 4; i++) paper.add(at(box(0.6, 0.01, 0.04, "#9e9e9e"), 0, 0.065, -0.2 + i * 0.13));
+    return paper;
+  }
+  if (kind === "carton") return group(at(box(0.55, 0.45, 0.45, "#c8a06a"), 0, 0.22, 0), at(box(0.56, 0.02, 0.1, "#a57f4b"), 0, 0.45, 0));
+  if (kind === "bottle") {
+    const bottle = group(at(cyl(0.16, 0.16, 0.6, "#b8e3ff", 16, { transparent: true, opacity: 0.75 }), 0, 0.16, 0), at(cyl(0.07, 0.07, 0.1, "#2e86de", 10), 0, 0.16, 0.36));
+    bottle.children.forEach(part => { part.rotation.x = Math.PI / 2; });
+    bottle.children[0].position.z = 0;
+    return bottle;
+  }
+  if (kind === "cup") return group(at(cyl(0.2, 0.14, 0.4, "#f8f8f8", 16, { transparent: true, opacity: 0.85 }), 0, 0.2, 0), at(cyl(0.02, 0.02, 0.35, "#e74c3c", 6), 0.08, 0.5, 0));
+  if (kind === "can") return group(at(cyl(0.15, 0.15, 0.42, "#d0d4d9", 16, { metalness: 0.6, roughness: 0.3 }), 0, 0.21, 0), at(cyl(0.155, 0.155, 0.2, "#e53935", 16), 0, 0.21, 0));
+  if (kind === "tin") return group(at(cyl(0.2, 0.2, 0.32, "#9aa3ad", 16, { metalness: 0.6, roughness: 0.35 }), 0, 0.16, 0), at(cyl(0.205, 0.205, 0.16, "#fbc02d", 16), 0, 0.16, 0));
+  if (kind === "peel") return messMesh("peel", 0);
+  if (kind === "core") {
+    const core = ball(0.14, "#f3e3b5");
+    core.scale.y = 1.8;
+    return group(at(core, 0, 0.25, 0), at(ball(0.12, "#e53935"), 0, 0.12, 0), at(ball(0.12, "#e53935"), 0, 0.42, 0), at(cyl(0.02, 0.02, 0.12, "#5d4037", 6), 0, 0.58, 0));
+  }
+  if (kind === "tissue") {
+    const tissue = new THREE.Mesh(new THREE.IcosahedronGeometry(0.2, 1), mat("#ffffff", { flatShading: true }));
+    tissue.castShadow = true;
+    tissue.scale.y = 0.7;
+    return group(at(tissue, 0, 0.15, 0));
+  }
+  return group(at(box(0.6, 0.18, 0.45, "#f5f5f5"), 0, 0.09, 0), at(box(0.3, 0.02, 0.2, "#c9a26b"), 0, 0.19, 0));
+}
+
+function recycleBin(color, text) {
+  return group(
+    at(box(1.6, 1.3, 1.2, color), 0, 0.65, 0),
+    at(box(1.7, 0.12, 1.3, color, { roughness: 0.5 }), 0, 1.36, 0),
+    at(box(1, 0.04, 0.3, "#263238"), 0, 1.43, 0.1),
+    at(label(text, { size: 0.5 }), 0, 2.1, 0)
+  );
+}
+
+export function buildRecycle(container, ui) {
+  const bins = {
+    paper: { icon: "📰", color: "#3f8fd8" },
+    plastic: { icon: "🧴", color: "#f39c12" },
+    metal: { icon: "🥫", color: "#8e9aa6" },
+    food: { icon: "🍌", color: "#6aa84f" },
+    trash: { icon: "🗑️", color: "#5d6d7e" }
   };
+  const state = g.createRecycle();
+  return buildSorter(container, ui, {
+    state,
+    background: "#e3f6e1", floor: "#dcd3c2", wall: "#f3fbef", rugColor: "#cfe8c8", fitWidth: 14.5,
+    meshFor: recycleMesh, scale: 1.5,
+    bins: Object.fromEntries(Object.entries(bins).map(([bin, { icon, color }], i) => [bin, {
+      spot: [-5.2 + i * 2.6, -3.7], icon, mesh: recycleBin(color, `${icon} ${g.RECYCLE_BINS[bin]}`)
+    }])),
+    intro: "垃圾要分類！紙類、塑膠類、鐵鋁罐、廚餘、一般垃圾，點地上的東西撿起來，再放進對的回收桶。"
+  });
 }
 
 // ---------------- 市場 ----------------
@@ -591,4 +657,372 @@ export function buildErrand(container, ui) {
   };
 }
 
-export const levels = { omelet: buildOmelet, dishes: buildDishes, clean: buildClean, errand: buildErrand };
+// ---------------- 擺餐桌 ----------------
+
+const TABLE_ICONS = { plate: "🍽️", bowl: "🥣", chopsticks: "🥢", cup: "🥤" };
+// 每樣餐具在餐墊上的位置
+const TABLE_SLOTS = { plate: [-0.35, 0.1], bowl: [0.2, 0.2], cup: [0.35, -0.3], chopsticks: [0.62, 0.1] };
+
+function tableware(kind, ghost = false) {
+  let item;
+  if (kind === "plate") item = group(at(cyl(0.33, 0.27, 0.05, "#5d9bd5", 24), 0, 0.025, 0), at(cyl(0.27, 0.27, 0.02, "#ffffff", 24), 0, 0.05, 0));
+  else if (kind === "bowl") item = group(at(cyl(0.22, 0.13, 0.18, "#ffffff", 20), 0, 0.09, 0), at(cyl(0.225, 0.225, 0.03, "#3f7fc4", 20), 0, 0.17, 0));
+  else if (kind === "cup") item = group(at(cyl(0.12, 0.1, 0.3, "#ffd166", 16), 0, 0.15, 0));
+  else {
+    item = group();
+    [-0.05, 0.05].forEach(x => {
+      const stick = at(cyl(0.02, 0.014, 0.6, "#b5651d", 8), x, 0.03, 0);
+      stick.rotation.x = Math.PI / 2;
+      item.add(stick);
+    });
+  }
+  if (ghost) {
+    // 淡淡的圖案：告訴小朋友這裡要放什麼
+    const ghostMat = new THREE.MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0.45, depthWrite: false });
+    item.traverse(part => { if (part.isMesh) { part.material = ghostMat; part.castShadow = false; } });
+  }
+  return item;
+}
+
+export function buildTable(container, ui) {
+  const stage = new Stage(container, { cameraPos: [0, 10.5, 5], lookAt: [0, 0.8, -2.3], background: "#fde7d6" });
+  room(stage, { floor: "#e9d2b0", wall: "#fff1e4" });
+  const state = g.createTable();
+  const pup = createPup(stage);
+  at(pup, -1, 0, 0.5);
+  const showHints = createHints(stage);
+
+  // 餐具櫃：四疊餐具
+  stage.add(at(counter(7), -2.9, 0, -3.6));
+  const stacks = {};
+  Object.keys(g.TABLE_ITEMS).forEach((kind, i) => {
+    const x = -5.3 + i * 1.6;
+    const stack = group();
+    for (let n = 0; n < 3; n++) {
+      const item = tableware(kind);
+      if (kind === "chopsticks") at(item, n * 0.15 - 0.15, 0, 0); else at(item, 0, n * (kind === "plate" ? 0.06 : 0.2), 0);
+      if (kind === "cup" || kind === "bowl") at(item, (n - 1) * 0.35, 0, 0);
+      stack.add(item);
+    }
+    stack.add(at(label(`${TABLE_ICONS[kind]} ${g.TABLE_ITEMS[kind]}`, { size: 0.5 }), 0, 1.2, 0));
+    hitBox(stack, 1.5, 1.6, 1.4);
+    at(stack, x, 1.42, -3.6);
+    stage.add(stack);
+    stacks[kind] = stack;
+    stage.tappable(stack, () => pup.walkTo(...standBefore(x, -3.6), () => {
+      g.tablePick(state, kind);
+      pup.carry(tableware(kind));
+      ui.sfx("pop");
+      refresh();
+    }, V(x, 0, -3.6)));
+  });
+
+  // 餐桌與兩張餐墊
+  const tableX = 3.2;
+  const tableZ = -1.8;
+  const table = group(at(box(4.4, 0.14, 2.4, "#b07d4f"), 0, 1.05, 0));
+  [[-2, -1], [2, -1], [-2, 1], [2, 1]].forEach(([x, z]) => table.add(at(box(0.16, 1, 0.16, "#8d5f38"), x, 0.5, z)));
+  [-1.1, 1.1].forEach(x => table.add(at(box(0.9, 1.4, 0.2, "#c79a6b"), x, 0.7, -1.6), at(box(0.9, 0.1, 0.8, "#c79a6b"), x, 0.55, -1.2)));
+  at(table, tableX, 0, tableZ);
+  stage.add(table);
+
+  const mats = [-1.1, 1.1].map((dx, seat) => {
+    const placemat = group(at(box(1.8, 0.02, 1.2, seat ? "#ffcad4" : "#bde0fe"), 0, 0.01, 0));
+    placemat.userData.content = group();
+    placemat.add(placemat.userData.content);
+    placemat.add(at(label(`座位 ${seat + 1}`, { size: 0.42 }), 0, 1.3, -0.3));
+    hitBox(placemat, 2, 1.2, 1.4, 0.4);
+    at(placemat, tableX + dx, 1.13, tableZ + 0.4);
+    stage.add(placemat);
+    stage.tappable(placemat, () => pup.walkTo(tableX + dx, tableZ + 1.9, () => {
+      const finished = state.seats.map(({ needs }) => needs);
+      const result = g.tablePlace(state, seat);
+      if (!result.ok) return result.hint && ui.hint(result.hint);
+      const [sx, sz] = TABLE_SLOTS[result.item];
+      const target = V(tableX + dx + sx, 1.14, tableZ + 0.4 + sz);
+      if (result.event === "table") {
+        // 先讓小朋友看到擺好的一整桌，再換新的一桌
+        pup.putDown(target, held => { held.removeFromParent(); drawMats(finished); setTimeout(() => drawMats(), 900); });
+        ui.score(state.score);
+        ui.good(`擺好 ${state.score} 桌了！`);
+      } else {
+        pup.putDown(target, held => { held.removeFromParent(); drawMats(); });
+        ui.sfx("pop");
+      }
+      refresh();
+    }, V(tableX + dx, 0, tableZ)));
+    return placemat;
+  });
+
+  // finished：剛擺好的一整桌（全部實心）；沒給就畫目前這桌，還沒擺的顯示淡淡圖案
+  function drawMats(finished) {
+    mats.forEach((placemat, seat) => {
+      const content = placemat.userData.content;
+      content.clear();
+      const needs = finished ? finished[seat] : state.seats[seat].needs;
+      needs.forEach(kind => {
+        const [x, z] = TABLE_SLOTS[kind];
+        content.add(at(tableware(kind, !finished && !state.seats[seat].placed.includes(kind)), x, 0.02, z));
+      });
+    });
+  }
+
+  function refresh() {
+    const missing = g.tableMissing(state);
+    const seatText = state.seats.map((seat, i) => `<span>座位${i + 1}</span>` + seat.needs.map(kind => `<span class="${seat.placed.includes(kind) ? "done" : "now"}">${TABLE_ICONS[kind]} ${g.TABLE_ITEMS[kind]}</span>`).join("")).join("<b>·</b>");
+    ui.guide(seatText);
+    if (state.holding) {
+      const spot = missing.find(({ item }) => item === state.holding);
+      showHints(spot ? [{ object: mats[spot.seat], text: `${g.TABLE_ITEMS[state.holding]}放這裡` }] : [{ object: stacks[missing[0].item], text: `換拿${g.TABLE_ITEMS[missing[0].item]}` }]);
+    } else if (missing.length) {
+      showHints([{ object: stacks[missing[0].item], text: `拿${g.TABLE_ITEMS[missing[0].item]}` }]);
+    }
+  }
+  drawMats();
+  refresh();
+  return {
+    stage,
+    intro: "要吃飯囉！看餐墊上淡淡的圖案，點櫃子拿餐具，再點餐墊擺上去。兩個座位都擺好，就完成一桌！",
+    score: () => state.score,
+    debug: { state, stacks, mats },
+    update() {}
+  };
+}
+
+// ---------------- 捉迷藏 ----------------
+
+function furniture(kind) {
+  if (kind === "sofa") return group(at(box(2.8, 0.7, 1.2, "#e07a5f"), 0, 0.35, 0), at(box(2.8, 1, 0.3, "#c9644a"), 0, 0.9, -0.45), at(box(0.3, 0.9, 1.2, "#c9644a"), -1.4, 0.55, 0), at(box(0.3, 0.9, 1.2, "#c9644a"), 1.4, 0.55, 0));
+  if (kind === "curtain") return group(at(box(2.6, 2.2, 0.1, "#bfe3ff"), 0, 2, -0.2), at(box(1.2, 3.2, 0.25, "#f2cc8f"), -0.75, 1.6, 0), at(box(1.2, 3.2, 0.25, "#f2cc8f"), 0.75, 1.6, 0), at(cyl(0.05, 0.05, 3, "#8d6e63", 8), 0, 3.25, 0));
+  if (kind === "wardrobe") return group(at(box(2, 3, 1, "#a47148"), 0, 1.5, 0), at(box(0.04, 2.8, 1.02, "#7a5230"), 0, 1.5, 0), at(ball(0.07, "#f1c40f"), -0.15, 1.5, 0.52), at(ball(0.07, "#f1c40f"), 0.15, 1.5, 0.52));
+  if (kind === "plant") {
+    const plant = group(at(cyl(0.45, 0.35, 0.7, "#d35400", 16), 0, 0.35, 0));
+    [[0, 1.3, 0, 0.6], [-0.4, 1, 0.1, 0.45], [0.4, 1.1, -0.1, 0.5], [0, 1.7, 0.1, 0.4]].forEach(([x, y, z, r]) => plant.add(at(ball(r, "#4caf50"), x, y, z)));
+    return plant;
+  }
+  if (kind === "box") return group(at(box(1.6, 1.1, 1.4, "#c8a06a"), 0, 0.55, 0), at(box(1.6, 0.05, 0.6, "#b58b55"), 0, 1.25, 0.9), at(box(1.6, 0.05, 0.6, "#b58b55"), 0, 1.25, -0.9));
+  return group(at(box(2.4, 0.1, 1.6, "#d64550"), 0, 1.1, 0), at(box(2.4, 1, 0.05, "#d64550"), 0, 0.6, 0.8), at(box(2.4, 1, 0.05, "#d64550"), 0, 0.6, -0.8), at(box(0.05, 1, 1.6, "#d64550"), -1.2, 0.6, 0), at(box(0.05, 1, 1.6, "#d64550"), 1.2, 0.6, 0));
+}
+
+export function buildSeek(container, ui) {
+  const stage = new Stage(container, { background: "#fbe7c6" });
+  room(stage, { floor: "#d9b99b", wall: "#fff6e0" });
+  const spots = [
+    { kind: "sofa", name: "沙發", icon: "🛋️", x: -4.2, z: -3.3, h: 1.5 },
+    { kind: "curtain", name: "窗簾", icon: "🪟", x: -0.6, z: -4.4, h: 3.4 },
+    { kind: "wardrobe", name: "衣櫃", icon: "🚪", x: 3.8, z: -3.9, h: 3.1 },
+    { kind: "plant", name: "大盆栽", icon: "🪴", x: -4.5, z: 0.6, h: 2.1 },
+    { kind: "box", name: "紙箱", icon: "📦", x: 4.3, z: 0.4, h: 1.4 },
+    { kind: "table", name: "桌子", icon: "🍽️", x: 1.4, z: -0.8, h: 1.3 }
+  ];
+  const state = g.createSearch(spots.length);
+  const pup = createPup(stage);
+  at(pup, -1.8, 0, 2);
+  const sister = createPup(stage, { blue: "#e8793b", light: "#f7dcb4", dark: "#a0522d", spot: "#c85f28", skin: "#f7dcb4" });
+  sister.scale.setScalar(0.75);
+  sister.visible = false;
+  const showHints = createHints(stage);
+
+  // 偶爾從躲的地方露出一截尾巴
+  const tail = at(cyl(0.06, 0.12, 0.6, "#e8793b", 10), 0, 0.3, 0);
+  tail.visible = false;
+  stage.add(tail);
+
+  const meshes = spots.map((spot, index) => {
+    const mesh = furniture(spot.kind);
+    mesh.add(at(label(`${spot.icon} ${spot.name}`, { size: 0.45 }), 0, spot.kind === "wardrobe" || spot.kind === "curtain" ? 2.9 : 2.2, 0.6));
+    // 點擊範圍跟家具一樣高，前面的家具才不會擋住後面的
+    hitBox(mesh, 2.6, spot.h, 1.8);
+    at(mesh, spot.x, 0, spot.z);
+    stage.add(mesh);
+    stage.tappable(mesh, () => pup.walkTo(spot.x + (spot.x > 0 ? -0.4 : 0.4), spot.z + 1.5, () => look(index), V(spot.x, 0, spot.z)));
+    return mesh;
+  });
+
+  const wiggle = (mesh, times = 3) => stage.tween(0.5, t => { mesh.rotation.z = Math.sin(t * Math.PI * 2 * times) * 0.05 * (1 - t); });
+  let busy = false;
+
+  function look(index) {
+    // 妹妹正在跳出來時點的，等動畫結束再找，不要吃掉小朋友的點擊
+    if (busy) return setTimeout(() => look(index), 300);
+    const spot = spots[index];
+    wiggle(meshes[index]);
+    const result = g.searchLook(state, index);
+    if (result.event === "found") {
+      busy = true;
+      tail.visible = false;
+      refresh();
+      at(sister, spot.x + (spot.x > 0 ? -1 : 1), 0, spot.z + 1.1);
+      sister.rotation.y = Math.atan2(pup.position.x - sister.position.x, pup.position.z - sister.position.z);
+      sister.visible = true;
+      stage.tween(0.8, t => { sister.position.y = Math.abs(Math.sin(t * Math.PI * 2)) * 0.5; });
+      ui.score(state.score);
+      ui.good(`找到了！妹妹躲在${spot.name}！`);
+      setTimeout(() => {
+        stage.tween(0.3, t => sister.scale.setScalar(0.75 * (1 - t) + 0.01), () => { sister.visible = false; sister.scale.setScalar(0.75); busy = false; nextPeek = 4; refresh(); });
+        ui.say("妹妹又躲起來了，快找找看！");
+      }, 1500);
+      return;
+    }
+    if (result.misses >= 2) {
+      // 提示：躲的地方會發出笑聲、晃一晃
+      wiggle(meshes[state.target], 5);
+      ui.hint(`${spot.name}後面沒有。好像聽到「嘻嘻」的笑聲…`);
+    } else ui.hint(`${spot.name}後面沒有，再找找看！`);
+    refresh();
+  }
+
+  function refresh() {
+    ui.guide(`<span class="now">🙈 妹妹躲起來了！點家具找找看</span>${state.misses >= 3 ? "<span>看箭頭</span>" : ""}`);
+    showHints(state.misses >= 3 ? [{ object: meshes[state.target], text: "好像在這裡！" }] : []);
+  }
+
+  let nextPeek = 5;
+  refresh();
+  return {
+    stage,
+    intro: "妹妹躲起來了！點沙發、窗簾、衣櫃這些家具，布麗會過去找。仔細看，有時候會露出尾巴喔！",
+    score: () => state.score,
+    debug: { state, meshes },
+    update(dt) {
+      if (busy) return;
+      nextPeek -= dt;
+      const spot = spots[state.target];
+      if (nextPeek <= 0 && !tail.visible) {
+        at(tail, spot.x + (spot.x > 0 ? -1.1 : 1.1), 0.3, spot.z + 0.5);
+        tail.visible = true;
+        nextPeek = 1.2;
+      } else if (nextPeek <= 0 && tail.visible) {
+        tail.visible = false;
+        nextPeek = 5;
+      }
+      if (tail.visible) tail.rotation.z = Math.sin(performance.now() / 90) * 0.6;
+    }
+  };
+}
+
+// ---------------- 尋寶 ----------------
+
+function landmark(kind) {
+  if (kind === "tree") {
+    const tree = group(at(cyl(0.3, 0.4, 2.2, "#8d5524", 12), 0, 1.1, 0));
+    [[0, 2.6, 0, 1.1], [-0.7, 2.2, 0.2, 0.8], [0.7, 2.3, -0.1, 0.8]].forEach(([x, y, z, r]) => tree.add(at(ball(r, "#3e9b45"), x, y, z)));
+    return tree;
+  }
+  if (kind === "flowers") {
+    const bed = group(at(box(2.2, 0.3, 1.2, "#6d4c41"), 0, 0.15, 0));
+    ["#e91e63", "#ffeb3b", "#9c27b0", "#ff5722", "#03a9f4", "#ffffff"].forEach((c, i) => {
+      const x = -0.8 + (i % 3) * 0.8;
+      const z = i < 3 ? -0.25 : 0.25;
+      bed.add(at(cyl(0.03, 0.03, 0.5, "#388e3c", 6), x, 0.55, z), at(ball(0.16, c), x, 0.85, z));
+    });
+    return bed;
+  }
+  if (kind === "rock") {
+    const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(0.9, 0), mat("#9e9e9e", { flatShading: true }));
+    rock.castShadow = true;
+    rock.scale.set(1.3, 0.8, 1);
+    return group(at(rock, 0, 0.6, 0));
+  }
+  if (kind === "slide") {
+    const slide = group(at(box(0.9, 2, 0.1, "#ef5350"), -0.8, 1, -0.4), at(box(0.9, 2, 0.1, "#ef5350"), -0.8, 1, 0.4), at(box(0.9, 0.1, 0.9, "#ffca28"), -0.8, 2, 0));
+    const chute = at(box(2.4, 0.1, 0.9, "#42a5f5"), 0.4, 1.05, 0);
+    chute.rotation.z = -0.7;
+    slide.add(chute);
+    return slide;
+  }
+  if (kind === "sandbox") {
+    const sand = group(at(box(2.2, 0.3, 1.8, "#a1887f"), 0, 0.15, 0), at(box(2, 0.32, 1.6, "#f5deb3"), 0, 0.16, 0), at(cyl(0.2, 0.15, 0.3, "#29b6f6", 12), 0.5, 0.45, 0.2));
+    return sand;
+  }
+  const house = group(at(box(1.6, 1.2, 1.4, "#e57373"), 0, 0.6, 0), at(box(0.6, 0.7, 0.05, "#3e2723"), 0, 0.4, 0.71));
+  const roof = new THREE.Mesh(new THREE.ConeGeometry(1.25, 0.8, 4), mat("#6d4c41"));
+  roof.rotation.y = Math.PI / 4;
+  roof.castShadow = true;
+  house.add(at(roof, 0, 1.6, 0));
+  return house;
+}
+
+export function buildTreasure(container, ui) {
+  const stage = new Stage(container, { background: "#bfe7ff" });
+  room(stage, { floor: "#9ccc65", wall: "#dff3ff" });
+  // 木頭圍籬
+  for (let x = -7.5; x <= 7.5; x += 0.6) stage.add(at(box(0.4, 1.4, 0.1, "#d7a86e"), x, 0.7, -4.9));
+  const spots = [
+    { kind: "tree", name: "大樹", icon: "🌳", x: -4.8, z: -3.3, h: 3.6 },
+    { kind: "flowers", name: "花圃", icon: "🌷", x: -1.6, z: -3.5, h: 1.2 },
+    { kind: "rock", name: "大石頭", icon: "🪨", x: 1.4, z: -3.4, h: 1.4 },
+    { kind: "slide", name: "溜滑梯", icon: "🛝", x: 4.6, z: -3.4, h: 2.2 },
+    { kind: "sandbox", name: "沙坑", icon: "🏖️", x: -3.8, z: 0.8, h: 0.7 },
+    { kind: "doghouse", name: "狗屋", icon: "🏠", x: 3.8, z: 0.8, h: 2 }
+  ];
+  const state = g.createSearch(spots.length);
+  const pup = createPup(stage);
+  at(pup, 0, 0, 1.5);
+  const showHints = createHints(stage);
+
+  const meshes = spots.map((spot, index) => {
+    const mesh = landmark(spot.kind);
+    mesh.add(at(label(`${spot.icon} ${spot.name}`, { size: 0.45 }), 0, spot.kind === "tree" ? 3.2 : 2.5, 0.3));
+    hitBox(mesh, 2.6, spot.h, 2);
+    at(mesh, spot.x, 0, spot.z);
+    stage.add(mesh);
+    stage.tappable(mesh, () => pup.walkTo(spot.x, spot.z + 1.9, () => dig(index), V(spot.x + (spot.x > 0 ? -1 : 1), 0, spot.z + 1.9)));
+    return mesh;
+  });
+
+  let busy = false;
+  function dig(index) {
+    if (busy) return setTimeout(() => dig(index), 300);
+    busy = true;
+    const spot = spots[index];
+    // 在小狗旁邊挖，鏡頭才看得到寶箱
+    const hole = V(spot.x + (spot.x > 0 ? -1 : 1), 0, spot.z + 1.9);
+    // 挖土：小狗點頭三下，土一顆顆冒出來
+    const dirt = group();
+    stage.add(dirt);
+    ui.sfx("scrub");
+    stage.tween(0.9, t => {
+      pup.rotation.x = Math.abs(Math.sin(t * Math.PI * 3)) * 0.3;
+      if (dirt.children.length < t * 8) dirt.add(at(ball(0.1 + Math.random() * 0.06, "#795548"), hole.x + (Math.random() - 0.5) * 0.8, 0.08, hole.z + (Math.random() - 0.5) * 0.5));
+    }, () => {
+      pup.rotation.x = 0;
+      const result = g.searchLook(state, index);
+      if (result.event === "found") {
+        const chest = group(at(box(0.8, 0.5, 0.55, "#8d5524"), 0, 0.25, 0), at(box(0.84, 0.15, 0.59, "#f1c40f"), 0, 0.55, 0), at(ball(0.14, ["#e91e63", "#00bcd4", "#8bc34a", "#ffc107"][state.score % 4], { emissive: "#ffffff", emissiveIntensity: 0.2 }), 0, 0.72, 0));
+        at(chest, hole.x, -0.6, hole.z);
+        stage.add(chest);
+        stage.tween(0.5, t => { chest.position.y = -0.6 + t * 0.6; });
+        ui.score(state.score);
+        ui.good(`挖到寶藏了！第 ${state.score} 個！`);
+        busy = false;
+        refresh();
+        setTimeout(() => {
+          stage.tween(0.4, t => { chest.scale.setScalar(Math.max(0.01, 1 - t)); dirt.scale.setScalar(Math.max(0.01, 1 - t)); }, () => { chest.removeFromParent(); dirt.removeFromParent(); });
+          ui.say(`新的藏寶圖：寶藏在${spots[state.target].name}那裡！`);
+        }, 1300);
+      } else {
+        ui.hint(`${spot.name}這裡沒有寶藏，看看藏寶圖！`);
+        setTimeout(() => stage.tween(0.4, t => dirt.scale.setScalar(Math.max(0.01, 1 - t)), () => dirt.removeFromParent()), 1200);
+        busy = false;
+        refresh();
+      }
+    });
+  }
+
+  function refresh() {
+    const target = spots[state.target];
+    ui.guide(`<span>🗺️ 藏寶圖</span><span class="now">寶藏在 ${target.icon} ${target.name}</span>`);
+    showHints(state.misses >= 1 ? [{ object: meshes[state.target], text: `寶藏在${target.name}` }] : []);
+  }
+  refresh();
+  return {
+    stage,
+    intro: `看上面的藏寶圖，寶藏藏在哪裡，就點那個地方，布麗會去挖！第一個寶藏在${spots[state.target].name}。`,
+    score: () => state.score,
+    debug: { state, meshes },
+    update() {}
+  };
+}
+
+export const levels = { omelet: buildOmelet, dishes: buildDishes, clean: buildClean, errand: buildErrand, table: buildTable, recycle: buildRecycle, seek: buildSeek, treasure: buildTreasure };

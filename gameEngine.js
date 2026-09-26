@@ -7,7 +7,11 @@ export const missions = [
   { id: "omelet", title: "香香蛋餅店", icon: "🍳", unit: "個蛋餅", summary: "拿餅皮、雞蛋、蔥花放進鍋子煎，3 分鐘煎幾個？" },
   { id: "dishes", title: "洗碗小幫手", icon: "🫧", unit: "個碗盤", summary: "把髒碗盤放進水槽刷一刷、沖乾淨、放上瀝水架。" },
   { id: "clean", title: "客廳整理隊", icon: "🧹", unit: "樣東西", summary: "把地上的玩具、衣服、垃圾送回正確的家。" },
-  { id: "errand", title: "市場跑腿趣", icon: "🛒", unit: "張清單", summary: "照著購物清單拿東西，拿齊了去櫃台結帳。" }
+  { id: "errand", title: "市場跑腿趣", icon: "🛒", unit: "張清單", summary: "照著購物清單拿東西，拿齊了去櫃台結帳。" },
+  { id: "table", title: "擺餐桌", icon: "🥢", unit: "桌", summary: "照桌上的淡淡圖案，擺好盤子、碗、筷子和杯子。" },
+  { id: "recycle", title: "資源回收站", icon: "♻️", unit: "樣東西", summary: "紙類、塑膠、鐵鋁罐、廚餘、一般垃圾，分對了才算！" },
+  { id: "seek", title: "捉迷藏", icon: "🙈", unit: "次", summary: "妹妹躲起來了！點家具找找看她在哪裡。" },
+  { id: "treasure", title: "後院尋寶", icon: "🗺️", unit: "個寶藏", summary: "看藏寶圖，到對的地方挖出寶藏。" }
 ];
 
 // ---------- 共用 ----------
@@ -148,7 +152,7 @@ export function dishesUseRack(state) {
   return { ok: true, event: "rack" };
 }
 
-// ---------- 客廳：撿起東西，放進正確的箱子 ----------
+// ---------- 分類（客廳、資源回收）：撿起東西，放進正確的箱子 ----------
 
 export const CLEAN_BINS = { toybox: "玩具箱", laundry: "洗衣籃", trash: "垃圾桶" };
 export const CLEAN_ITEMS = [
@@ -162,14 +166,14 @@ export const CLEAN_ITEMS = [
 ];
 export const FLOOR_SIZE = 6;
 
-export function createClean(rand = Math.random) {
-  const state = { score: 0, holding: null, floor: [], nextId: 1, rand };
-  while (state.floor.length < FLOOR_SIZE) spawnMess(state);
+export function createClean(rand = Math.random, { items = CLEAN_ITEMS, bins = CLEAN_BINS, floorSize = FLOOR_SIZE } = {}) {
+  const state = { score: 0, holding: null, floor: [], nextId: 1, rand, items, bins };
+  while (state.floor.length < floorSize) spawnMess(state);
   return state;
 }
 
 function spawnMess(state) {
-  const item = CLEAN_ITEMS[Math.floor(state.rand() * CLEAN_ITEMS.length)];
+  const item = state.items[Math.floor(state.rand() * state.items.length)];
   const mess = { id: state.nextId++, ...item };
   state.floor.push(mess);
   return mess;
@@ -185,7 +189,7 @@ export function cleanPick(state, id) {
 
 export function cleanDrop(state, bin) {
   if (!state.holding) return { ok: false, hint: "先撿起地上的東西。" };
-  if (state.holding.bin !== bin) return { ok: false, hint: `${state.holding.name}不是放${CLEAN_BINS[bin]}喔。` };
+  if (state.holding.bin !== bin) return { ok: false, hint: `${state.holding.name}不是放${state.bins[bin]}喔。` };
   const item = state.holding;
   state.holding = null;
   state.score += 1;
@@ -219,4 +223,91 @@ export function errandCheckout(state) {
   state.basket = [];
   state.list = newList(state.rand);
   return { ok: true, event: "checkout" };
+}
+
+// ---------- 資源回收（用上面的分類規則） ----------
+
+export const RECYCLE_BINS = { paper: "紙類", plastic: "塑膠類", metal: "鐵鋁罐", food: "廚餘", trash: "一般垃圾" };
+export const RECYCLE_ITEMS = [
+  { kind: "newspaper", name: "舊報紙", bin: "paper" },
+  { kind: "carton", name: "紙盒", bin: "paper" },
+  { kind: "bottle", name: "寶特瓶", bin: "plastic" },
+  { kind: "cup", name: "塑膠杯", bin: "plastic" },
+  { kind: "can", name: "鋁罐", bin: "metal" },
+  { kind: "tin", name: "鐵罐頭", bin: "metal" },
+  { kind: "peel", name: "香蕉皮", bin: "food" },
+  { kind: "core", name: "蘋果核", bin: "food" },
+  { kind: "tissue", name: "用過的衛生紙", bin: "trash" },
+  { kind: "diaper", name: "髒尿布", bin: "trash" }
+];
+
+export function createRecycle(rand = Math.random) {
+  return createClean(rand, { items: RECYCLE_ITEMS, bins: RECYCLE_BINS, floorSize: 4 });
+}
+
+// ---------- 擺餐桌：照每個位子的淡淡圖案擺好餐具 ----------
+
+export const TABLE_ITEMS = { plate: "盤子", bowl: "碗", chopsticks: "筷子", cup: "杯子" };
+export const SEATS = 2;
+
+function newTable(rand) {
+  // 每個位子一定有盤子，再加兩樣
+  return Array.from({ length: SEATS }, () => ({
+    needs: ["plate", ...shuffle(["bowl", "chopsticks", "cup"], rand).slice(0, 2)],
+    placed: []
+  }));
+}
+
+export function createTable(rand = Math.random) {
+  return { score: 0, holding: null, seats: newTable(rand), rand };
+}
+
+export function tableMissing(state) {
+  return state.seats.flatMap((seat, index) => seat.needs.filter(item => !seat.placed.includes(item)).map(item => ({ seat: index, item })));
+}
+
+export function tablePick(state, item) {
+  if (!TABLE_ITEMS[item]) return { ok: false };
+  state.holding = item;
+  return { ok: true, event: "pick" };
+}
+
+export function tablePlace(state, seatIndex) {
+  const seat = state.seats[seatIndex];
+  if (!seat) return { ok: false };
+  if (!state.holding) return { ok: false, hint: "先去櫃子拿餐具。" };
+  const name = TABLE_ITEMS[state.holding];
+  if (!seat.needs.includes(state.holding)) return { ok: false, hint: `這個位子不用${name}喔，看看淡淡的圖案。` };
+  if (seat.placed.includes(state.holding)) return { ok: false, hint: `這裡已經有${name}了。` };
+  const item = state.holding;
+  seat.placed.push(item);
+  state.holding = null;
+  if (tableMissing(state).length) return { ok: true, event: "place", item };
+  state.score += 1;
+  state.seats = newTable(state.rand);
+  return { ok: true, event: "table", item };
+}
+
+// ---------- 找地點（捉迷藏、尋寶）：目標在其中一個地點，點對了才算 ----------
+
+export function createSearch(spots, rand = Math.random) {
+  const state = { score: 0, spots, target: -1, misses: 0, rand };
+  moveTarget(state);
+  return state;
+}
+
+function moveTarget(state) {
+  const choices = [...Array(state.spots).keys()].filter(index => index !== state.target);
+  state.target = choices[Math.floor(state.rand() * choices.length)];
+  state.misses = 0;
+}
+
+export function searchLook(state, index) {
+  if (index !== state.target) {
+    state.misses += 1;
+    return { ok: false, event: "miss", misses: state.misses };
+  }
+  state.score += 1;
+  moveTarget(state);
+  return { ok: true, event: "found", at: index };
 }
