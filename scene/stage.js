@@ -254,6 +254,13 @@ export function createPup(stage) {
     );
     eye.position.set(side * 0.21, 0.14, 0.34);
     head.add(eye);
+    // 眼睛外側的深藍色半圓花紋：扁圓片貼在頭上，被眼白蓋住一半
+    const normal = new THREE.Vector3(side * 0.78, 0.3, 0.55).normalize();
+    const patch = ball(0.25, dark);
+    patch.scale.set(1, 1, 0.22);
+    patch.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+    patch.position.copy(normal.multiplyScalar(0.48));
+    head.add(patch);
     const brow = cyl(0.045, 0.045, 0.24, light, 10);
     brow.position.set(side * 0.22, 0.42, 0.34);
     brow.rotation.set(0.5, 0, Math.PI / 2 - side * 0.25);
