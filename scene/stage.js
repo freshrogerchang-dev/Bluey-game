@@ -228,21 +228,21 @@ export function createPup(stage) {
   body.position.y = 0.95;
   const head = group(
     ball(0.5, blue),
-    at(ball(0.3, light), 0, -0.12, 0.35),
+    at(ball(0.3, "#f2d3ab"), 0, -0.12, 0.35), // 鼻子周圍是皮膚色
     at(ball(0.09, dark), 0, -0.02, 0.62)
   );
   head.position.y = 1.9;
   // 大眼睛（眼白＋黑眼珠＋反光）與白眉毛
   const eyes = [-1, 1].map(side => {
     const eye = group(
-      ball(0.18, "#ffffff"),
-      at(ball(0.11, "#1a1a1a"), 0, -0.01, 0.1),
-      at(ball(0.04, "#ffffff"), -0.035, 0.035, 0.2)
+      ball(0.22, "#ffffff"),
+      at(ball(0.135, "#1a1a1a"), 0, -0.01, 0.12),
+      at(ball(0.05, "#ffffff"), -0.045, 0.045, 0.245)
     );
-    eye.position.set(side * 0.2, 0.12, 0.38);
+    eye.position.set(side * 0.21, 0.14, 0.34);
     head.add(eye);
     const brow = cyl(0.045, 0.045, 0.24, "#ffffff", 10);
-    brow.position.set(side * 0.21, 0.36, 0.38);
+    brow.position.set(side * 0.22, 0.42, 0.34);
     brow.rotation.set(0.5, 0, Math.PI / 2 - side * 0.25);
     head.add(brow);
     return eye;
