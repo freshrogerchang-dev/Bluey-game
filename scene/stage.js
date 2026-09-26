@@ -254,9 +254,9 @@ export function createPup(stage) {
     );
     eye.position.set(side * 0.21, 0.14, 0.34);
     head.add(eye);
-    // 眼睛後面臉上的深藍色大圓片：眼白蓋住中間，露出來的一圈從外側繞到內側，下緣被皮膚色口鼻蓋住，看起來是半圓
-    const normal = new THREE.Vector3(side * 0.55, 0.36, 0.75).normalize();
-    const patch = ball(0.33, dark);
+    // 眼睛後面臉上的深藍色圓片：眼白蓋住中間，露出外側和上方一圈，內緣切齊眼白內側，下緣被皮膚色口鼻蓋住
+    const normal = new THREE.Vector3(side * 0.72, 0.36, 0.6).normalize();
+    const patch = ball(0.29, dark);
     patch.scale.set(1, 1, 0.22);
     patch.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
     patch.position.copy(normal.multiplyScalar(0.46));
@@ -268,13 +268,13 @@ export function createPup(stage) {
     return eye;
   });
   [-1, 1].forEach(side => {
-    const ear = cyl(0, 0.2, 0.55, dark, 12);
-    ear.position.set(side * 0.28, 0.5, -0.05);
+    const ear = cyl(0, 0.28, 0.8, dark, 12);
+    ear.position.set(side * 0.3, 0.6, -0.05);
     ear.rotation.z = -side * 0.35;
     // 耳朵內側是皮膚色
-    const inner = cyl(0, 0.13, 0.38, "#f2d3ab", 12);
+    const inner = cyl(0, 0.19, 0.56, "#f2d3ab", 12);
     inner.scale.z = 0.45;
-    inner.position.set(0, -0.06, 0.13);
+    inner.position.set(0, -0.09, 0.17);
     ear.add(inner);
     head.add(ear);
   });
