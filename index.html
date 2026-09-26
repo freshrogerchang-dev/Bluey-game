@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#f6b93b" />
-    <meta name="description" content="給 5–8 歲孩子的生活任務小遊戲" />
+    <meta name="description" content="給 5–8 歲孩子的 3D 生活任務小遊戲" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="assets/icon.svg" />
     <link rel="stylesheet" href="styles.css" />
@@ -25,31 +25,41 @@
           <div>
             <p class="eyebrow">今天一起幫忙吧！</p>
             <h1>選一個生活任務</h1>
-            <p>慢慢做、想一想，每完成一步都很棒。</p>
+            <p>點畫面上的東西，布麗會跑過去幫忙。每關 3 分鐘，看你能完成幾個！</p>
           </div>
           <img class="hero-character" src="assets/bluey.jpg" alt="布麗開心地舉起雙手" />
         </div>
         <div id="mission-grid" class="mission-grid"></div>
-        <p class="parent-note">給大人：每關約 2–4 分鐘，沒有倒數與失敗懲罰。</p>
+        <p class="parent-note">給大人：每關 3 分鐘，做錯只會溫和提示，不會扣分；最佳紀錄只存在這台裝置。</p>
       </section>
     </template>
 
     <template id="game-template">
       <section class="game-screen">
-        <div class="game-heading">
-          <div>
-            <p id="game-kicker" class="eyebrow"></p>
-            <h1 id="game-title"></h1>
+        <div class="hud">
+          <h1 id="game-title"></h1>
+          <div id="score-box" class="hud-pill">⭐ <strong id="score">0</strong> <span id="score-unit"></span></div>
+          <div id="timer-box" class="hud-pill timer">⏱️ <strong id="timer">3:00</strong></div>
+        </div>
+        <div class="scene-wrap">
+          <div id="scene" class="scene"></div>
+          <div id="guide" class="guide" aria-live="polite"></div>
+          <div id="toast" class="toast" role="status"></div>
+          <div id="countdown" class="countdown hidden"></div>
+          <div id="intro" class="overlay">
+            <div class="result-card">
+              <img src="assets/bluey.jpg" alt="" class="intro-character" />
+              <h2 id="intro-title"></h2>
+              <p id="intro-text"></p>
+              <p id="intro-best" class="intro-best"></p>
+              <div class="action-row">
+                <button id="repeat-button" class="secondary" aria-label="再聽一次">🔈 再聽一次</button>
+                <button id="start-button" class="primary">開始 3 分鐘！</button>
+              </div>
+            </div>
           </div>
-          <div id="progress-dots" class="progress-dots" aria-label="任務進度"></div>
+          <div id="result" class="overlay hidden"></div>
         </div>
-        <div id="coach" class="coach-card">
-          <img src="assets/bluey.jpg" alt="" />
-          <div><strong id="coach-title"></strong><p id="coach-text"></p></div>
-          <button id="repeat-button" class="speak-button" aria-label="再聽一次">🔈</button>
-        </div>
-        <div id="play-area" class="play-area"></div>
-        <div id="feedback" class="feedback" role="status"></div>
       </section>
     </template>
 
