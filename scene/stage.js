@@ -225,6 +225,15 @@ export function createPup(stage) {
     at(ball(0.4, light), 0, -0.05, 0.28)
   );
   body.scale.set(1, 1.15, 0.9);
+  // 身上的深藍色斑點：小球稍微突出身體表面，看起來像一塊塊花紋
+  const spotColor = "#2f6aa8";
+  [[0, 0.3, -1, 0.17], [-0.65, 0.45, -0.6, 0.14], [0.7, 0.1, -0.7, 0.15], [-0.95, -0.1, 0.1, 0.12],
+   [0.95, 0.4, 0, 0.12], [0.25, 0.95, -0.3, 0.13], [-0.25, -0.55, -0.8, 0.13], [0.55, -0.5, 0.45, 0.1],
+   [-0.7, 0.6, 0.4, 0.12], [0.75, 0.55, 0.35, 0.11]]
+    .forEach(([x, y, z, r]) => {
+      const dir = new THREE.Vector3(x, y, z).normalize();
+      body.add(at(ball(r, spotColor), ...dir.multiplyScalar(0.55 - r * 0.72).toArray()));
+    });
   body.position.y = 0.95;
   const head = group(
     ball(0.5, blue),
@@ -232,6 +241,10 @@ export function createPup(stage) {
     at(ball(0.09, dark), 0, -0.02, 0.62)
   );
   head.position.y = 1.9;
+  [[0, 0.75, -0.65, 0.15], [-0.7, 0.5, -0.5, 0.11], [0.75, 0.25, -0.6, 0.1]].forEach(([x, y, z, r]) => {
+    const dir = new THREE.Vector3(x, y, z).normalize();
+    head.add(at(ball(r, spotColor), ...dir.multiplyScalar(0.5 - r * 0.72).toArray()));
+  });
   // 大眼睛（眼白＋黑眼珠＋反光）與白眉毛
   const eyes = [-1, 1].map(side => {
     const eye = group(
