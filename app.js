@@ -44,6 +44,7 @@ function tone(kind = "good") {
 
 function showHome() {
   stopGame();
+  document.body.classList.remove("playing");
   homeButton.classList.add("hidden");
   const view = document.querySelector("#home-template").content.cloneNode(true);
   const grid = view.querySelector("#mission-grid");
@@ -70,6 +71,8 @@ function stopGame() {
 
 function startMission(mission) {
   stopGame();
+  document.body.classList.add("playing");
+  window.scrollTo(0, 0);
   homeButton.classList.remove("hidden");
   const view = document.querySelector("#game-template").content.cloneNode(true);
   app.replaceChildren(view);

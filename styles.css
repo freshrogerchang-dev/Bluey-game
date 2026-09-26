@@ -48,7 +48,12 @@ main { width: min(100% - 28px, 1000px); margin: auto; padding: 10px 0 50px; }
 .hud-pill strong { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
 .timer.hurry { background: #ffe0d6; color: #b33a22; animation: pulse 1s ease infinite; }
 .scene-wrap { position: relative; height: min(72vh, 640px); min-height: 380px; border-radius: 30px; overflow: hidden; box-shadow: var(--shadow); background: #dcefff; }
-.scene { position: absolute; inset: 0; touch-action: manipulation; }
+.scene { position: absolute; inset: 0; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+/* 遊戲中整頁固定：不捲動、不縮放，畫面不會被手指拖走 */
+body.playing { height: 100dvh; overflow: hidden; overscroll-behavior: none; position: fixed; inset: 0; }
+body.playing main { height: calc(100dvh - 82px); padding-bottom: 12px; }
+body.playing .game-screen { height: 100%; grid-template-rows: auto 1fr; }
+body.playing .scene-wrap { height: auto; min-height: 0; }
 .scene canvas { display: block; cursor: pointer; }
 .guide { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; pointer-events: none; font-weight: 900; }
 .guide span { background: rgba(255,255,255,.88); border-radius: 14px; padding: 6px 12px; color: #6b7f92; }
@@ -86,6 +91,7 @@ main { width: min(100% - 28px, 1000px); margin: auto; padding: 10px 0 50px; }
   .mission-card { min-height: 135px; grid-template-columns: 70px 1fr auto; }
   .mission-icon { width: 68px; height: 68px; font-size: 2.5rem; }
   .scene-wrap { height: 68vh; border-radius: 22px; }
+  body.playing main { height: calc(100dvh - 76px); }
   .hud-pill { padding: 6px 12px; font-size: 1.05rem; }
   .guide { font-size: .9rem; }
 }

@@ -127,6 +127,12 @@ export class Stage {
     this.camera.aspect = w / h;
     // 直式手機畫面會把鏡頭拉遠，確保整個場景的寬度都看得到
     const dir = this.baseCamera.clone().sub(this.lookAt);
+    // 直式畫面（手機）改成比較俯視的角度，場景會佔滿更多高度
+    if (this.camera.aspect < 1) {
+      const portrait = Math.min(1, (1 - this.camera.aspect) * 2);
+      dir.y *= 1 + 0.6 * portrait;
+      dir.z *= 1 - 0.5 * portrait;
+    }
     const vFov = THREE.MathUtils.degToRad(this.camera.fov);
     const needed = this.fitWidth / 2 / Math.tan(vFov / 2) / this.camera.aspect;
     const scale = Math.max(1, needed / dir.length());
@@ -180,20 +186,6 @@ export class Stage {
     this.tween(0.25, t => object.scale.setScalar(base * (1 + Math.sin(t * Math.PI) * 0.12)));
   }
 
-  // 物件沿拋物線飛到世界座標 target
-  fly(object, target, { duration = 0.45, height = 1.2, done } = {}) {
-    const world = new THREE.Vector3();
-    object.getWorldPosition(world);
-    if (object.parent !== this.scene) {
-      this.scene.attach(object);
-    }
-    const from = world.clone();
-    this.tween(duration, t => {
-      object.position.lerpVectors(from, target, t);
-      object.position.y += Math.sin(t * Math.PI) * height;
-    }, done);
-  }
-
   frame() {
     this.timer.update();
     const dt = Math.min(this.timer.getDelta(), 0.1);
@@ -233,40 +225,72 @@ export function createPup(stage) {
     at(ball(0.4, light), 0, -0.05, 0.28)
   );
   body.scale.set(1, 1.15, 0.9);
+  // 身上的深藍色斑點：小球稍微突出身體表面，看起來像一塊塊花紋
+  const spotColor = "#2f6aa8";
+  [[0, 0.3, -1, 0.17], [-0.65, 0.45, -0.6, 0.14], [0.7, 0.1, -0.7, 0.15], [-0.95, -0.1, 0.1, 0.12],
+   [0.95, 0.4, 0, 0.12], [0.25, 0.95, -0.3, 0.13], [-0.25, -0.55, -0.8, 0.13], [0.55, -0.5, 0.45, 0.1],
+   [-0.7, 0.6, 0.4, 0.12], [0.75, 0.55, 0.35, 0.11]]
+    .forEach(([x, y, z, r]) => {
+      const dir = new THREE.Vector3(x, y, z).normalize();
+      body.add(at(ball(r, spotColor), ...dir.multiplyScalar(0.55 - r * 0.72).toArray()));
+    });
   body.position.y = 0.95;
   const head = group(
     ball(0.5, blue),
-    at(ball(0.3, light), 0, -0.12, 0.35),
+    at(ball(0.3, "#f2d3ab"), 0, -0.12, 0.35), // 鼻子周圍是皮膚色
     at(ball(0.09, dark), 0, -0.02, 0.62)
   );
   head.position.y = 1.9;
+  [[0, 0.75, -0.65, 0.15], [-0.7, 0.5, -0.5, 0.11], [0.75, 0.25, -0.6, 0.1]].forEach(([x, y, z, r]) => {
+    const dir = new THREE.Vector3(x, y, z).normalize();
+    head.add(at(ball(r, spotColor), ...dir.multiplyScalar(0.5 - r * 0.72).toArray()));
+  });
   // 大眼睛（眼白＋黑眼珠＋反光）與白眉毛
   const eyes = [-1, 1].map(side => {
     const eye = group(
-      ball(0.18, "#ffffff"),
-      at(ball(0.11, "#1a1a1a"), 0, -0.01, 0.1),
-      at(ball(0.04, "#ffffff"), -0.035, 0.035, 0.2)
+      ball(0.22, "#ffffff"),
+      at(ball(0.135, "#1a1a1a"), 0, -0.01, 0.12),
+      at(ball(0.05, "#ffffff"), -0.045, 0.045, 0.245)
     );
-    eye.position.set(side * 0.2, 0.12, 0.38);
+    eye.position.set(side * 0.21, 0.14, 0.34);
     head.add(eye);
-    const brow = cyl(0.045, 0.045, 0.24, "#ffffff", 10);
-    brow.position.set(side * 0.21, 0.36, 0.38);
+    // 眼睛後面臉上的深藍色圓片：眼白蓋住中間，露出外側和上方一圈，內緣切齊眼白內側，下緣被皮膚色口鼻蓋住
+    const normal = new THREE.Vector3(side * 0.72, 0.36, 0.6).normalize();
+    const patch = ball(0.29, dark);
+    patch.scale.set(1, 1, 0.22);
+    patch.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
+    patch.position.copy(normal.multiplyScalar(0.46));
+    head.add(patch);
+    const brow = cyl(0.045, 0.045, 0.24, light, 10);
+    brow.position.set(side * 0.22, 0.42, 0.34);
     brow.rotation.set(0.5, 0, Math.PI / 2 - side * 0.25);
     head.add(brow);
     return eye;
   });
   [-1, 1].forEach(side => {
-    const ear = cyl(0, 0.2, 0.55, dark, 12);
-    ear.position.set(side * 0.28, 0.5, -0.05);
+    const ear = cyl(0, 0.28, 0.8, dark, 12);
+    ear.position.set(side * 0.3, 0.6, -0.05);
     ear.rotation.z = -side * 0.35;
+    // 耳朵內側是皮膚色
+    const inner = cyl(0, 0.19, 0.56, "#f2d3ab", 12);
+    inner.scale.z = 0.45;
+    inner.position.set(0, -0.09, 0.17);
+    ear.add(inner);
     head.add(ear);
   });
   const tail = cyl(0.05, 0.1, 0.6, dark, 10);
   tail.position.set(0, 1.0, -0.6);
   tail.rotation.x = -0.9;
   const legs = [-1, 1].map(side => at(cyl(0.14, 0.16, 0.5, dark, 12), side * 0.25, 0.25, 0.05));
-  const hand = at(new THREE.Group(), 0, 1.25, 0.75);
-  pup.add(body, head, tail, ...legs, hand);
+  // 手臂：空手時垂下，拿東西時往前伸，東西夾在兩隻手掌中間
+  const arms = [-1, 1].map(side => {
+    const pivot = at(new THREE.Group(), side * 0.36, 1.32, 0.2);
+    pivot.add(at(cyl(0.1, 0.11, 0.62, blue, 12), 0, -0.31, 0), at(ball(0.13, light), 0, -0.64, 0));
+    pivot.rotation.z = side * 0.25;
+    return pivot;
+  });
+  const hand = at(new THREE.Group(), 0, 1.5, 0.78);
+  pup.add(body, head, tail, ...legs, ...arms, hand);
   pup.userData = { hand, target: null, onArrive: null, queue: [], speed: 6.5, walk: 0 };
 
   // 小朋友常常連點好幾下：依序排隊執行，最多記住 3 件事
@@ -286,6 +310,13 @@ export function createPup(stage) {
     object.rotation.set(0, 0, 0);
     hand.add(object);
   };
+  // 把手上的東西放到世界座標 target：短短滑過去，不會飛走
+  pup.putDown = (target, done) => {
+    const object = pup.release();
+    if (!object) return done?.();
+    const from = object.position.clone();
+    stage.tween(0.22, t => object.position.lerpVectors(from, target, t), () => done?.(object));
+  };
   pup.release = () => {
     const object = hand.children[0];
     if (object) stage.scene.attach(object);
@@ -295,6 +326,13 @@ export function createPup(stage) {
   stage.onUpdate(dt => {
     const data = pup.userData;
     tail.rotation.z = Math.sin(performance.now() / 120) * 0.5;
+    const holding = hand.children.length > 0;
+    arms.forEach((arm, i) => {
+      const goal = holding ? -1.95 : 0;
+      arm.rotation.x += (goal - arm.rotation.x) * 0.3;
+      arm.rotation.z = (i ? 1 : -1) * (holding ? -0.18 : 0.25);
+    });
+    hand.position.y = 1.5 + (body.position.y - 0.95);
     // 每 3.5 秒眨一次眼
     const blink = performance.now() % 3500 < 120 ? 0.15 : 1;
     eyes.forEach(eye => { eye.scale.y = blink; });
@@ -313,7 +351,8 @@ export function createPup(stage) {
       data.target = null;
       data.onArrive = null;
       done?.();
-      if (data.queue.length) startJob(data.queue.shift());
+      // done 可能已經自己安排了下一段路（例如把蛋餅端去盤子），那就不要蓋掉
+      if (!data.target && data.queue.length) startJob(data.queue.shift());
       return;
     }
     const step = Math.min(dist, data.speed * dt);

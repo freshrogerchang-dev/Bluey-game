@@ -132,26 +132,30 @@ export function buildOmelet(container, ui) {
   }
 
   stage.tappable(stove, () => pup.walkTo(...standBefore(stoveX - 0.3, -3.6), () => {
-    const held = pup.holding();
     const result = g.omeletUsePan(state);
     if (!result.ok) return ui.hint(result.hint);
     if (result.event === "add") {
-      pup.release();
-      stage.fly(held, V(stoveX - 0.3, 1.9, -3.6), { done: () => { held.removeFromParent(); rebuildFood(); } });
+      pup.putDown(V(stoveX - 0.3, 1.75, -3.6), held => { held.removeFromParent(); rebuildFood(); });
       ui.sfx("pop");
       if (state.pan.length === g.OMELET_RECIPE.length) ui.say("開始煎囉！變金黃色就翻面。");
     }
     if (result.event === "flip") {
-      stage.tween(0.5, t => { food.rotation.x = t * Math.PI; food.position.y = 0.23 + Math.sin(t * Math.PI) * 1.2; }, () => { food.rotation.x = 0; });
+      stage.tween(0.5, t => { food.rotation.x = t * Math.PI; food.position.y = 0.23 + Math.sin(t * Math.PI) * 0.45; }, () => { food.rotation.x = 0; });
       ui.sfx("good");
     }
     if (result.event === "serve" || result.event === "toss") {
       const piece = omelet;
-      const target = result.event === "serve" ? V(4.9, 1.25 + Math.min(state.score, 12) * 0.07, -1.6) : V(stoveX + 2, 0.1, -1.8);
-      if (piece) stage.fly(piece, target, { height: 2, duration: 0.6, done: () => {
-        if (result.event === "serve" && state.score <= 12) { piece.rotation.set(0, 0, 0); plate.attach(piece); } else piece.removeFromParent();
-      } });
-      food.clear();
+      if (piece && result.event === "serve") {
+        // 布麗用手把蛋餅端到完成區的盤子上
+        pup.carry(piece);
+        const stack = Math.min(state.score, 12);
+        pup.walkTo(3.4, -1.6, () => pup.putDown(V(4.9, 1.25 + stack * 0.07, -1.6), done => {
+          if (state.score <= 12) plate.attach(done); else done.removeFromParent();
+        }), V(4.9, 0, -1.6));
+      } else if (piece) {
+        // 焦掉的慢慢縮小消失
+        stage.tween(0.5, t => piece.scale.setScalar(Math.max(0.01, 1 - t)), () => piece.removeFromParent());
+      }
       omelet = null;
       if (result.event === "serve") ui.good(`煎好 ${state.score} 個！`);
       else ui.hint(result.hint);
@@ -284,12 +288,10 @@ export function buildDishes(container, ui) {
   }, V(-4.6, 0, -3.6)));
 
   stage.tappable(sink, () => pup.walkTo(...standBefore(sinkX, -3.6), () => {
-    const held = pup.holding();
     const result = g.dishesUseSink(state);
     if (!result.ok) return ui.hint(result.hint);
     if (result.event === "place") {
-      pup.release();
-      stage.fly(held, V(sinkX, 1.5, -3.6), { height: 0.6, done: () => { inSink.add(held); held.position.set(0, 0, 0); } });
+      pup.putDown(V(sinkX, 1.5, -3.6), held => { inSink.add(held); held.position.set(0, 0, 0); });
       ui.sfx("pop");
     } else {
       const dish = inSink.children[0];
@@ -315,22 +317,24 @@ export function buildDishes(container, ui) {
     ui.sfx("water");
     const list = [...bubbles.children];
     stage.tween(0.9, t => list.forEach(b => b.scale.setScalar(1 - t)), () => { bubbles.clear(); water.visible = false; });
+    // 沖乾淨後布麗把碗盤拿在手上，準備放去瀝水架
+    const dish = inSink.children[0];
+    if (dish) pup.carry(dish);
+    ui.say("洗好了！拿去瀝水架。");
     refresh();
   }, V(sinkX + 1.9, 0, -4.1)));
 
   stage.tappable(rack, () => pup.walkTo(...standBefore(4.3, -3.6), () => {
     const result = g.dishesUseRack(state);
     if (!result.ok) return ui.hint(result.hint);
-    const dish = inSink.children[0];
-    if (dish) {
-      const slot = served % 6;
-      stage.fly(dish, V(4.3 - 0.8 + slot * 0.32, 1.7, -3.6), { height: 1.6, done: () => {
-        dish.rotation.set(0, 0, Math.PI / 2.4);
-        rack.attach(dish);
-        while (rack.children.filter(child => child.userData.clean).length > 6) rack.children.find(child => child.userData.clean).removeFromParent();
-      } });
+    if (!pup.holding() && inSink.children[0]) pup.carry(inSink.children[0]);
+    const slot = served % 6;
+    pup.putDown(V(4.3 - 0.8 + slot * 0.32, 1.7, -3.6), dish => {
+      dish.rotation.set(0, 0, Math.PI / 2.4);
       dish.userData.clean = true;
-    }
+      rack.attach(dish);
+      while (rack.children.filter(child => child.userData.clean).length > 6) rack.children.find(child => child.userData.clean).removeFromParent();
+    });
     served += 1;
     ui.score(state.score);
     ui.good(`洗好 ${state.score} 個！`);
@@ -418,11 +422,9 @@ export function buildClean(container, ui) {
     at(mesh, x, 0, z);
     stage.add(mesh);
     stage.tappable(mesh, () => pup.walkTo(x, z + 1.4, () => {
-      const held = pup.holding();
       const result = g.cleanDrop(state, bin);
       if (!result.ok) return ui.hint(result.hint);
-      pup.release();
-      stage.fly(held, V(x, 1.1, z), { height: 1, done: () => held.removeFromParent() });
+      pup.putDown(V(x, 0.9, z), held => held.removeFromParent());
       ui.score(state.score);
       ui.good(`${result.item.name}回家了！`);
       spawn(result.spawned, true);
@@ -432,7 +434,8 @@ export function buildClean(container, ui) {
 
   // 散落的位置：格子隨機挑，避免重疊
   const spots = [];
-  for (let x = -5; x <= 5; x += 2) for (let z = -1.2; z <= 3.6; z += 1.6) spots.push([x, z]);
+  // 只放在鏡頭看得到的範圍，布麗走過去也不會跑出畫面
+  for (let x = -5; x <= 5; x += 2) for (const z of [-1.4, -0.2, 1, 2.2]) spots.push([x, z]);
   const used = new Map();
   const messMeshes = new Map();
   function freeSpot() {
@@ -562,7 +565,8 @@ export function buildErrand(container, ui) {
     const bag = group(at(box(0.8, 0.9, 0.5, "#fff3e0"), 0, 0.45, 0));
     at(bag, 3.6, 1.2, 0.9);
     stage.add(bag);
-    stage.fly(bag, V(-7, 0.5, 4), { duration: 1, height: 2, done: () => bag.removeFromParent() });
+    // 袋子放在櫃台上一下，再慢慢縮小消失
+    stage.tween(1.4, t => bag.scale.setScalar(t < 0.6 ? 1 : Math.max(0.01, 1 - (t - 0.6) / 0.4)), () => bag.removeFromParent());
     basketItems.clear();
     ui.score(state.score);
     ui.good(`完成 ${state.score} 張清單！`);
