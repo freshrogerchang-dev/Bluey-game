@@ -250,18 +250,16 @@ export function createPup(stage) {
     const eye = group(
       ball(0.22, "#ffffff"),
       at(ball(0.135, "#1a1a1a"), 0, -0.01, 0.12),
-      at(ball(0.05, "#ffffff"), -0.045, 0.045, 0.245),
-      // 深藍色半圓蓋進眼白外側：一顆藍球和眼白重疊，露出來的部分就是半圓
-      at(ball(0.17, dark), side * 0.14, 0.03, 0.02)
+      at(ball(0.05, "#ffffff"), -0.045, 0.045, 0.245)
     );
     eye.position.set(side * 0.21, 0.14, 0.34);
     head.add(eye);
-    // 眼睛外側頭上的深藍色花紋，和眼白上的半圓連成一片
-    const normal = new THREE.Vector3(side * 0.78, 0.3, 0.55).normalize();
-    const patch = ball(0.24, dark);
+    // 眼睛後面臉上的深藍色大圓片：眼白蓋住中間，露出來的一圈從外側繞到內側，下緣被皮膚色口鼻蓋住，看起來是半圓
+    const normal = new THREE.Vector3(side * 0.55, 0.36, 0.75).normalize();
+    const patch = ball(0.33, dark);
     patch.scale.set(1, 1, 0.22);
     patch.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
-    patch.position.copy(normal.multiplyScalar(0.48));
+    patch.position.copy(normal.multiplyScalar(0.46));
     head.add(patch);
     const brow = cyl(0.045, 0.045, 0.24, light, 10);
     brow.position.set(side * 0.22, 0.42, 0.34);
