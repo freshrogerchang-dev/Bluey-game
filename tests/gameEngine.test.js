@@ -4,8 +4,8 @@ import * as g from "../gameEngine.js";
 
 const fixedRand = () => 0.3;
 
-test("four timed missions are available", () => {
-  assert.deepEqual(g.missions.map(m => m.id), ["omelet", "dishes", "clean", "errand"]);
+test("eight timed missions are available", () => {
+  assert.deepEqual(g.missions.map(m => m.id), ["omelet", "dishes", "clean", "errand", "table", "recycle", "seek", "treasure"]);
   assert.equal(g.GAME_SECONDS, 180);
 });
 
@@ -98,4 +98,48 @@ test("errand only accepts listed items and checks out a full basket", () => {
   assert.equal(g.errandCheckout(s).event, "checkout");
   assert.equal(s.score, 1);
   assert.equal(s.basket.length, 0);
+});
+
+test("recycling uses its own bins and hints", () => {
+  const s = g.createRecycle(fixedRand);
+  assert.equal(s.floor.length, 4);
+  const item = s.floor[0];
+  g.cleanPick(s, item.id);
+  const wrong = Object.keys(g.RECYCLE_BINS).find(bin => bin !== item.bin);
+  assert.match(g.cleanDrop(s, wrong).hint, new RegExp(g.RECYCLE_BINS[wrong]));
+  assert.equal(g.cleanDrop(s, item.bin).ok, true);
+  assert.equal(s.score, 1);
+  assert.ok(s.floor.every(mess => g.RECYCLE_ITEMS.some(r => r.kind === mess.kind)));
+});
+
+test("table setting follows each seat's pattern and scores a full table", () => {
+  const s = g.createTable(fixedRand);
+  assert.equal(s.seats.length, g.SEATS);
+  s.seats.forEach(seat => { assert.equal(seat.needs.length, 3); assert.ok(seat.needs.includes("plate")); });
+  assert.equal(g.tablePlace(s, 0).ok, false);
+  const unused = Object.keys(g.TABLE_ITEMS).find(item => !s.seats[0].needs.includes(item));
+  g.tablePick(s, unused);
+  assert.equal(g.tablePlace(s, 0).ok, false);
+  const missing = g.tableMissing(s);
+  assert.equal(missing.length, g.SEATS * 3);
+  let last;
+  for (const { seat, item } of missing) {
+    g.tablePick(s, item);
+    last = g.tablePlace(s, seat);
+  }
+  assert.equal(last.event, "table");
+  assert.equal(s.score, 1);
+  assert.equal(g.tableMissing(s).length, g.SEATS * 3);
+});
+
+test("search counts misses and moves the target after a find", () => {
+  const s = g.createSearch(5, fixedRand);
+  const wrong = (s.target + 1) % 5;
+  assert.equal(g.searchLook(s, wrong).misses, 1);
+  assert.equal(g.searchLook(s, wrong).misses, 2);
+  const target = s.target;
+  assert.equal(g.searchLook(s, target).event, "found");
+  assert.equal(s.score, 1);
+  assert.equal(s.misses, 0);
+  assert.notEqual(s.target, target);
 });

@@ -215,10 +215,9 @@ export class Stage {
 }
 
 // 藍色小狗：可以走路、拿東西
-export function createPup(stage) {
-  const blue = "#5b9bd5";
-  const light = "#cfe6f7";
-  const dark = "#1f4e79";
+// 小狗角色。colors 可以換成別的毛色（例如捉迷藏的妹妹）
+export function createPup(stage, colors = {}) {
+  const { blue = "#5b9bd5", light = "#cfe6f7", dark = "#1f4e79", spot = "#2f6aa8", skin = "#f2d3ab" } = colors;
   const pup = new THREE.Group();
   const body = group(
     at(ball(0.55, blue), 0, 0, 0),
@@ -226,7 +225,7 @@ export function createPup(stage) {
   );
   body.scale.set(1, 1.15, 0.9);
   // 身上的深藍色斑點：小球稍微突出身體表面，看起來像一塊塊花紋
-  const spotColor = "#2f6aa8";
+  const spotColor = spot;
   [[0, 0.3, -1, 0.17], [-0.65, 0.45, -0.6, 0.14], [0.7, 0.1, -0.7, 0.15], [-0.95, -0.1, 0.1, 0.12],
    [0.95, 0.4, 0, 0.12], [0.25, 0.95, -0.3, 0.13], [-0.25, -0.55, -0.8, 0.13], [0.55, -0.5, 0.45, 0.1],
    [-0.7, 0.6, 0.4, 0.12], [0.75, 0.55, 0.35, 0.11]]
@@ -237,7 +236,7 @@ export function createPup(stage) {
   body.position.y = 0.95;
   const head = group(
     ball(0.5, blue),
-    at(ball(0.3, "#f2d3ab"), 0, -0.12, 0.35), // 鼻子周圍是皮膚色
+    at(ball(0.3, skin), 0, -0.12, 0.35), // 鼻子周圍是皮膚色
     at(ball(0.09, dark), 0, -0.02, 0.62)
   );
   head.position.y = 1.9;
@@ -272,7 +271,7 @@ export function createPup(stage) {
     ear.position.set(side * 0.3, 0.6, -0.05);
     ear.rotation.z = -side * 0.35;
     // 耳朵內側是皮膚色
-    const inner = cyl(0, 0.19, 0.56, "#f2d3ab", 12);
+    const inner = cyl(0, 0.19, 0.56, skin, 12);
     inner.scale.z = 0.45;
     inner.position.set(0, -0.09, 0.17);
     ear.add(inner);
